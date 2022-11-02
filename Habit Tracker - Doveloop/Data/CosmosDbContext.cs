@@ -16,5 +16,7 @@ namespace Habit_Tracker___Doveloop.Data
         }
 
         public CosmosDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(dbContextOptions, operationalStoreOptions) { }
+
+        public DbSet<Habit_Tracker___Doveloop.Models.CosmosModels.CosmosHabit> CosmosHabit { get; set; }
     }
 }

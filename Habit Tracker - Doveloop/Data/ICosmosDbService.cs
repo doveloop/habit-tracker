@@ -3,6 +3,7 @@
     using Habit_Tracker___Doveloop.Models.CosmosModels;
     public interface ICosmosDbService
     {
+        public void SetUser(string user);
         Task AddHabitAsync(CosmosHabit habit);
         Task DeleteHabitAsync(string id);
         Task<CosmosHabit> GetHabitAsync(string id);

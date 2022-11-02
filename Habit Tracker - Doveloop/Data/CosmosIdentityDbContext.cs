@@ -23,52 +23,52 @@ namespace Habit_Tracker___Doveloop.Data
                 b.HasPartitionKey(_ => _.Id);
                 b.Property(_ => _.ConcurrencyStamp).IsETagConcurrency();
 
-                b.ToContainer("Identity");
+                b.ToContainer("Users");
             });
             builder.Entity<IdentityUserRole<string>>(b =>
             {
                 b.UseETagConcurrency().HasPartitionKey(_ => _.UserId);
-                b.ToContainer("Identity_UserRoles");
+                b.ToContainer("UserRoles");
             });
             builder.Entity<IdentityRole>(b =>
             {
                 b.HasKey(_ => _.Id);
                 b.HasPartitionKey(_ => _.Id);
                 b.Property(_ => _.ConcurrencyStamp).IsETagConcurrency();
-                b.ToContainer("Identity_Roles");
+                b.ToContainer("Roles");
             });
             builder.Entity<IdentityRoleClaim<string>>(b =>
             {
                 b.Property(_ => _.Id).HasConversion(_ => _.ToString(), _ => Convert.ToInt32(_));
                 b.UseETagConcurrency().HasPartitionKey(_ => _.Id);
-                b.ToContainer("Identity");
+                b.ToContainer("Users");
             });
             builder.Entity<IdentityUserClaim<string>>(b => {
                 b.Property(_ => _.Id).HasConversion(_ => _.ToString(), _ => Convert.ToInt32(_));
                 b.UseETagConcurrency().HasPartitionKey(_ => _.Id);
-                b.ToContainer("Identity");
+                b.ToContainer("Users");
             });
             builder.Entity<IdentityUserLogin<string>>(b =>
             {
                 b.UseETagConcurrency().HasPartitionKey(_ => _.ProviderKey);
-                b.ToContainer("Identity_Logins");
+                b.ToContainer("Logins");
             });
             builder.Entity<IdentityUserToken<string>>(b =>
             {
                 b.UseETagConcurrency().HasPartitionKey(_ => _.UserId);
-                b.ToContainer("Identity_Tokens");
+                b.ToContainer("Tokens");
             });
             builder.Entity<DeviceFlowCodes>(b =>
             {
                 b.HasKey(_ => new { _.ClientId, _.SessionId, _.DeviceCode });
                 b.UseETagConcurrency().HasPartitionKey(_ => _.SessionId);
-                b.ToContainer("Identity_DeviceFlowCodes");
+                b.ToContainer("DeviceFlowCodes");
             });
             builder.Entity<PersistedGrant>(b =>
             {
                 b.HasKey(_ => new { _.Type, _.ClientId, _.SessionId });
                 b.UseETagConcurrency().HasPartitionKey(_ => _.Key);
-                b.ToContainer("Identity_PersistedGrant");
+                b.ToContainer("PersistedGrant");
             });
         }
     }

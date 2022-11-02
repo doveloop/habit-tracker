@@ -14,7 +14,7 @@ builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosCl
 
 // Add services to the container.
 builder.Services.AddDbContext<CosmosDbContext>(options =>
-    options.UseCosmos(cosmosInfo["connectionString"], cosmosInfo["DBName"]));
+    options.UseCosmos(cosmosInfo["connectionString"], cosmosInfo["IdentityDBName"]));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
