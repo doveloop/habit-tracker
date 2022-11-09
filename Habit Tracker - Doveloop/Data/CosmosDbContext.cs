@@ -2,13 +2,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Habit_Tracker___Doveloop.Models.CosmosModels;
 
 namespace Habit_Tracker___Doveloop.Data
 {
     public class CosmosDbContext : CosmosIdentityDbContext<IdentityUser>
     {
-        //public DbSet<CosmosHabit> Habits { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -16,7 +14,5 @@ namespace Habit_Tracker___Doveloop.Data
         }
 
         public CosmosDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(dbContextOptions, operationalStoreOptions) { }
-
-        public DbSet<Habit_Tracker___Doveloop.Models.CosmosModels.CosmosHabit> CosmosHabit { get; set; }
     }
 }

@@ -1,13 +1,13 @@
 ﻿namespace Habit_Tracker___Doveloop.Data
 {
-    using Habit_Tracker___Doveloop.Models.CosmosModels;
+    using Habit_Tracker___Doveloop.Models;
     public interface ICosmosDbService
     {
         public void SetUser(string user);
-        Task AddHabitAsync(CosmosHabit habit);
-        Task DeleteHabitAsync(string id);
-        Task<CosmosHabit> GetHabitAsync(string id);
-        Task<IEnumerable<CosmosHabit>> GetHabitsAsync(string query);
-        Task UpdateHabitAsync(CosmosHabit habit);
+        Task AddHabitLabelAsync(HabitLabel habit);
+        Task DeleteHabitLabelAsync(string id);
+        Task<HabitLabel> GetHabitLabelAsync(string id);
+        Task<IEnumerable<HabitLabel>> GetHabitsLabelsAsync(string query);
+        Task UpdateHabitLabelAsync(HabitLabel habit);
     }
 }

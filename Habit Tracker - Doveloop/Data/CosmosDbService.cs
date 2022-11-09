@@ -1,18 +1,18 @@
 ﻿namespace Habit_Tracker___Doveloop.Data
 {
     using Microsoft.Azure.Cosmos;
-    using Habit_Tracker___Doveloop.Models.CosmosModels;
+    using Habit_Tracker___Doveloop.Models;
 
     public class CosmosDbService : ICosmosDbService
     {
         private CosmosClient _client;
-        private Container _habitContainer;
+        private Container _habitLabelContainer;
         private PartitionKey _partitionKey;
 
-        public CosmosDbService(CosmosClient dbClient, string habitDbName, string containerName)
+        public CosmosDbService(CosmosClient dbClient, string habitLabelDbName, string containerName)
         {
             _client = dbClient;
-            _habitContainer = _client.GetContainer(habitDbName, containerName);
+            _habitLabelContainer = _client.GetContainer(habitLabelDbName, containerName);
         }
 
         public void SetUser(string user)
@@ -20,22 +20,22 @@
             _partitionKey = new PartitionKey(user);
         }
 
-        #region Habit
-        public async Task AddHabitAsync(CosmosHabit habit)
+        #region HabitsLabels
+        public async Task AddHabitLabelAsync(HabitLabel habit)
         {
-            await _habitContainer.CreateItemAsync<CosmosHabit>(habit, _partitionKey);
+            await _habitLabelContainer.CreateItemAsync<HabitLabel>(habit, _partitionKey);
         }
 
-        public async Task DeleteHabitAsync(string id)
+        public async Task DeleteHabitLabelAsync(string id)
         {
-            await _habitContainer.DeleteItemAsync<CosmosHabit>(id, _partitionKey);
+            await _habitLabelContainer.DeleteItemAsync<HabitLabel>(id, _partitionKey);
         }
 
-        public async Task<CosmosHabit> GetHabitAsync(string id)
+        public async Task<HabitLabel> GetHabitLabelAsync(string id)
         {
             try
             {
-                ItemResponse<CosmosHabit> response = await _habitContainer.ReadItemAsync<CosmosHabit>(id, _partitionKey);
+                ItemResponse<HabitLabel> response = await _habitLabelContainer.ReadItemAsync<HabitLabel>(id, _partitionKey);
                 return response.Resource;
             } catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
@@ -43,10 +43,10 @@
             }
         }
 
-        public async Task<IEnumerable<CosmosHabit>> GetHabitsAsync(string queryString)
+        public async Task<IEnumerable<HabitLabel>> GetHabitsLabelsAsync(string queryString)
         {
-            var query = _habitContainer.GetItemQueryIterator<CosmosHabit>(new QueryDefinition(queryString));
-            List<CosmosHabit> results = new List<CosmosHabit>();
+            var query = _habitLabelContainer.GetItemQueryIterator<HabitLabel>(new QueryDefinition(queryString));
+            List<HabitLabel> results = new List<HabitLabel>();
             while(query.HasMoreResults)
             {
                 var response = await query.ReadNextAsync();
@@ -55,14 +55,10 @@
             return results;
         }
 
-        public async Task UpdateHabitAsync(CosmosHabit habit)
+        public async Task UpdateHabitLabelAsync(HabitLabel habit)
         {
-            await _habitContainer.UpsertItemAsync(habit, _partitionKey);
+            await _habitLabelContainer.UpsertItemAsync(habit, _partitionKey);
         }
-        #endregion
-
-        #region Labels
-
         #endregion
     }
 }

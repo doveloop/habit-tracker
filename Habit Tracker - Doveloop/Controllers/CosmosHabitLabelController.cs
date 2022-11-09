@@ -1,35 +1,26 @@
 ﻿using System;
 using System.Threading;
 using Microsoft.AspNetCore.Mvc;
-using Habit_Tracker___Doveloop.Models.CosmosModels;
-using Habit_Tracker___Doveloop.Models.CosmosModels.ViewModels;
+using Habit_Tracker___Doveloop.Models;
+using Habit_Tracker___Doveloop.Models.ViewModels;
 using Habit_Tracker___Doveloop.Data;
 
-namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
+namespace Habit_Tracker___Doveloop.Controllers
 {
-    public class CosmosHabitController : Controller
+    public class CosmosHabitLabelController : Controller
     {
         private readonly ICosmosDbService _cosmosDbService;
-        public CosmosHabitController(ICosmosDbService cosmosDbService)
+        public CosmosHabitLabelController(ICosmosDbService cosmosDbService)
         {
             _cosmosDbService = cosmosDbService;
         }
 
-        private CosmosHabitViewModel CreateHabitViewModel(CosmosHabit habit, List<CosmosHabit> habitsLabels)
+        private CosmosHabitViewModel CreateHabitViewModel(HabitLabel habit, List<HabitLabel> habitsLabels)
         {
             CosmosHabitViewModel viewModel = new CosmosHabitViewModel();
             viewModel.Habit = habit;
-            List<CosmosLabel> labels = new List<CosmosLabel>();
-            foreach (Guid labelId in habit.Labels)
-            {
-                CosmosLabel label = new CosmosLabel();
-                CosmosHabit item = habitsLabels.Single(l => l.Id == labelId);
-                label.Id = item.Id;
-                label.Type = item.Type;
-                label.User = item.User;
-                label.Name = item.Name;
-                labels.Add(label);
-            }
+            List<HabitLabel> labels = new List<HabitLabel>();
+            if (habit.RelationIds != null) habit.RelationIds.ForEach(id => labels.Add(habitsLabels.Single(l => l.Id == id)));
             viewModel.Labels = labels;
             return viewModel;
         }
@@ -37,9 +28,9 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
         public async Task<IActionResult> Index()
         {
             _cosmosDbService.SetUser(HttpContext.User.Identity.Name);
-            var habitsLabels = await _cosmosDbService.GetHabitsAsync("Select * FROM c WHERE c.user = \"" + HttpContext.User.Identity.Name + "\"");
+            var habitsLabels = await _cosmosDbService.GetHabitsLabelsAsync("Select * FROM c WHERE c.user = \"" + HttpContext.User.Identity.Name + "\"");
             List<CosmosHabitViewModel> viewModels = new List<CosmosHabitViewModel>();
-            foreach (CosmosHabit habit in habitsLabels.ToList().Where(h => h.Type == "habit"))
+            foreach (HabitLabel habit in habitsLabels.ToList().Where(h => h.Type == "habit"))
             {
                 viewModels.Add(CreateHabitViewModel(habit, habitsLabels.ToList()));
             }
@@ -48,7 +39,7 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
 
         public IActionResult Create()
         {
-            CosmosHabit habit = new CosmosHabit();
+            HabitLabel habit = new HabitLabel();
             habit.User = HttpContext.User.Identity.Name;
             return View(habit);
         }
@@ -56,12 +47,12 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
         [HttpPost]
         [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAsync([Bind("Id,Type,User,Name")] CosmosHabit habit)
+        public async Task<IActionResult> CreateAsync([Bind("Id,Type,User,Name")] HabitLabel habit)
         {
-            habit.Labels = new Guid[0];
+            habit.RelationIds = new List<Guid>();
             if(!string.IsNullOrEmpty(habit.Name) && habit.User != null && habit.User == HttpContext.User.Identity.Name)
             {
-                await _cosmosDbService.AddHabitAsync(habit);
+                await _cosmosDbService.AddHabitLabelAsync(habit);
                 return RedirectToAction("Index");
             }
             return View(habit);
@@ -75,7 +66,7 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
                 return NotFound();
             }
 
-            CosmosHabit habit = await _cosmosDbService.GetHabitAsync(id);
+            HabitLabel habit = await _cosmosDbService.GetHabitLabelAsync(id);
             if(habit == null)
             {
                 return NotFound();
@@ -87,11 +78,11 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
         [HttpPost]
         [ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAsync([Bind("Id,Type,User,Name")] CosmosHabit habit)
+        public async Task<IActionResult> EditAsync([Bind("Id,Type,User,Name")] HabitLabel habit)
         {
             if(ModelState.IsValid)
             {
-                await _cosmosDbService.UpdateHabitAsync(habit);
+                await _cosmosDbService.UpdateHabitLabelAsync(habit);
                 return RedirectToAction("Index");
             }
             return View(habit);
@@ -105,7 +96,7 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
                 return NotFound();
             }
 
-            CosmosHabit habit = await _cosmosDbService.GetHabitAsync(id);
+            HabitLabel habit = await _cosmosDbService.GetHabitLabelAsync(id);
             if (habit == null)
             {
                 return NotFound();
@@ -119,7 +110,7 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmedAsync([Bind("Id")] string id)
         {
-            await _cosmosDbService.DeleteHabitAsync(id);
+            await _cosmosDbService.DeleteHabitLabelAsync(id);
             return RedirectToAction("Index");
         }
 
@@ -127,8 +118,7 @@ namespace Habit_Tracker___Doveloop.Controllers.CosmosControllers
         public async Task<IActionResult> DetailsAsync(string id)
         {
             CosmosHabitViewModel viewModel = new CosmosHabitViewModel();
-            viewModel.Habit = await _cosmosDbService.GetHabitAsync(id);
-            //viewModel.Labels = await _cosmosDbService.GetLabelsAsync(viewModel.Habit.Labels);
+            viewModel.Habit = await _cosmosDbService.GetHabitLabelAsync(id);
             return View(viewModel);
         }
     }
