@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc;
-@model Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel
+﻿@model Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -15,9 +14,10 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Habit.Id" />
             <input type="hidden" asp-for="Habit.User" />
+            <input type="hidden" asp-for="Habit.Type" value="habit" />
             <div class="form-group">
                 <label asp-for="Habit.Name" class="control-label"></label>
-                <input asp-for="Habit.Name" class="form-control" name="habitName"/>
+                <input asp-for="Habit.Name" class="form-control" name="habitName" />
                 <span asp-validation-for="Habit.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -26,18 +26,19 @@
                         <tr>
                             @{
                                 int count = 0;
-                                List<Habit_Tracker___Doveloop.Models.ViewModels.AppliedLabelData> labels = ViewBag.Labels;
+                                int tableCols = 3;
+                                List<Habit_Tracker___Doveloop.Models.ViewModels.AppliedData> labels = ViewBag.LabelViewModel;
 
                                 foreach (var Label in labels)
                                 {
-                                    if(count++ % 3 == 0) {
+                                    if(count++ % tableCols == 0) {
                                         @:</tr><tr>
                                     }
                                     @:<td>
                                         <input type="checkbox"
                                             name="selectedLabels"
                                             value="@Label.Id"
-                                            @(Html.Raw(Label.IsApplied ? "checked=\"checked\"" : "")) />
+                                            @(Html.Raw(Model.Habit.RelationIds.Contains(Label.Id) ? "checked=\"checked\"" : "")) />
                                             @Label.Name
                                     @:</td>
                                 }

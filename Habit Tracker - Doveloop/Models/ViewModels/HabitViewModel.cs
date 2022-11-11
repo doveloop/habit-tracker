@@ -2,20 +2,13 @@
 {
     public class HabitViewModel
     {
-        public Habit Habit { get; set; }
-        public List<Label> Labels { get; set; }
-        public List<Day> Days { get; set; }
-        public List<HabitEntry> HabitEntries { get; set; }
+        public HabitLabel Habit { get; set; }
+        public List<HabitLabel> Labels { get; set; }
 
-        /*public HabitViewModel(Habit habit)
+        public HabitViewModel(HabitLabel habit, IEnumerable<HabitLabel> labels)
         {
             Habit = habit;
-            Labels = new List<Label>();
-            Days = new List<Day>();
-            HabitEntries = habit.HabitEntries;
-
-            habit.Labels.ForEach(hl => Labels.Add(hl.Label));
-            habit.Days.ForEach(hd => Days.Add(hd.Day));
-        }*/
+            Labels = labels.ToList();
+        }
     }
 }

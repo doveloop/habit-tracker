@@ -1,10 +1,21 @@
 ﻿namespace Habit_Tracker___Doveloop.Models
 {
+    using Newtonsoft.Json;
     public class HabitLabel
     {
-        public int HabitId { get; set; }
-        public int LabelId { get; set; }
-        public Habit Habit { get; set; }
-        public Label Label { get; set; }
+        [JsonProperty(PropertyName = "id")]
+        public Guid Id { get; set; } = Guid.NewGuid();//unique key in database
+
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }//either "habit" or "label"
+
+        [JsonProperty(PropertyName = "user")]
+        public string User { get; set; }
+
+        [JsonProperty(PropertyName = "name")]
+        public string Name { get; set; }
+
+        [JsonProperty(PropertyName = "relationIds")]//Habits have label ids, labels have habit ids
+        public List<Guid> RelationIds { get; set; }
     }
 }
