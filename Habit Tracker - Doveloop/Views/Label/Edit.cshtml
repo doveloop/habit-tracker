@@ -1,0 +1,63 @@
+﻿@model Habit_Tracker___Doveloop.Models.ViewModels.LabelViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Habit</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Label.Id" />
+            <input type="hidden" asp-for="Label.User" />
+            <input type="hidden" asp-for="Label.Type" value="label" />
+            <div class="form-group">
+                <label asp-for="Label.Name" class="control-label"></label>
+                <input asp-for="Label.Name" class="form-control" name="labelName" />
+                <span asp-validation-for="Label.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                int count = 0;
+                                int tableCols = 3;
+                                List<Habit_Tracker___Doveloop.Models.ViewModels.AppliedData> habits = ViewBag.HabitViewModel;
+
+                                foreach (var habit in habits)
+                                {
+                                    if(count++ % tableCols == 0) {
+                                        @:</tr><tr>
+                                    }
+                                    @:<td>
+                                        <input type="checkbox"
+                                            name="selectedHabits"
+                                            value="@habit.Id"
+                                            @(Html.Raw(Model.Label.RelationIds.Contains(habit.Id) ? "checked=\"checked\"" : "")) />
+                                            @habit.Name
+                                    @:</td>
+                                }
+                                @:</tr>
+                            }
+                    </table>
+                </div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

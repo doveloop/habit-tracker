@@ -9,7 +9,6 @@ namespace Habit_Tracker___Doveloop.Data
 {
     public class CosmosIdentityDbContext<TUser> : ApiAuthorizationDbContext<TUser> where TUser : IdentityUser
     {
-        //public DbSet<CosmosHabit> Habits { get; set; }
 
         public CosmosIdentityDbContext(DbContextOptions options, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions) { }
 

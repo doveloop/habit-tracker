@@ -1,4 +1,4 @@
-﻿@model Habit_Tracker___Doveloop.Models.ViewModels.CosmosHabitViewModel
+﻿@model Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
 <h1>Details</h1>
 
 <div>
-    <h4>CosmosHabit</h4>
+    <h4>Habit</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -20,7 +20,14 @@
             @Html.DisplayNameFor(model => model.Labels)
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Labels)
+            @{
+                string labelNames = "";
+                foreach (var label in Model.Labels)
+                    labelNames += label.Name + ", ";
+                if (labelNames.Length == 0) labelNames = "No labels";
+                else labelNames = labelNames.Remove(labelNames.Length - 2, 2);
+                @labelNames;
+            }
         </dd>
     </dl>
 </div>

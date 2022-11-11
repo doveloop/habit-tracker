@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.ViewModels.CosmosHabitViewModel>
+﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel>
 
 @{
     ViewData["Title"] = "Index";
@@ -28,7 +28,6 @@
                 @Html.DisplayFor(modelItem => item.Habit.Name)
             </td>
             <td>
-                <!-- @Html.DisplayFor(modelItem => item.Labels) -->
                 @{
                     string labelNames = "";
                     foreach (var label in item.Labels)
