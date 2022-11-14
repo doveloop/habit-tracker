@@ -13,6 +13,7 @@ namespace Habit_Tracker___Doveloop.Data
             base.OnModelCreating(builder);
         }
 
-        public CosmosDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> operationalStoreOptions) : base(dbContextOptions, operationalStoreOptions) { }
+        public CosmosDbContext(DbContextOptions dbContextOptions, IOptions<OperationalStoreOptions> operationalStoreOptions)
+            : base(dbContextOptions, operationalStoreOptions) { }
     }
 }
