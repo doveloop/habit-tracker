@@ -6,12 +6,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 //cosmos connection
-var cosmosInfo = builder.Configuration.GetSection("CosmosDB");
-builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(cosmosInfo["connectionString"]), cosmosInfo["DBName"], cosmosInfo["HabitLabelContainer"]));
+var configuration = builder.Configuration;
+builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString"]), configuration["DBName"], configuration["HabitLabelContainer"]));
 
 // Add services to the container.
 builder.Services.AddDbContext<CosmosDbContext>(options =>
-    options.UseCosmos(cosmosInfo["connectionString"], cosmosInfo["IdentityDBName"]));
+    options.UseCosmos(configuration["DbConnectionString"], configuration["DBName"]));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -19,10 +19,9 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 
 builder.Services.AddIdentityServer().AddApiAuthorization<IdentityUser, CosmosDbContext>();
 
-var configuration = builder.Configuration;
 builder.Services.AddAuthentication().AddGoogle(googleOptions =>
 {
-    googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
+    googleOptions.ClientId = configuration["Authentication:Google:ClientId"]; 
     googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
 });
 
