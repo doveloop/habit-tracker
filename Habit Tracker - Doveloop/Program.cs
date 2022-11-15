@@ -7,7 +7,21 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 //cosmos connection
 var configuration = builder.Configuration;
-builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString"]), configuration["DBName"], configuration["HabitLabelContainer"]));
+try
+{
+    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString"]), configuration["DBName"], configuration["HabitLabelContainer"]));
+}
+catch (Exception e)
+{
+    try
+    {
+        builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString2"]), configuration["DBName"], configuration["HabitLabelContainer"]));
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Error connecting to database");
+    }
+}
 
 // Add services to the container.
 builder.Services.AddDbContext<CosmosDbContext>(options =>
