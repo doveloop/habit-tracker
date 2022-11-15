@@ -1,4 +1,5 @@
-﻿@{
+﻿@model Habit_Tracker___Doveloop.Models.Graph
+@{
     ViewData["Title"] = "Graphs";
 }
 
@@ -9,31 +10,6 @@
 
 <h3>Interactive Nested Pie Chart</h3>
 <canvas id="bar_graph5" width="700px" height="500px"></canvas>
-
-<form id="actual-vs-planned-data">
-    <table>
-        <tr>
-            <td>Planned</td>
-            <td>Actual</td>
-        </tr>
-        <tr>
-            <td><input type="number" id="planned_1" value="5"></td>
-            <td><input type="number" id="actual_1" value="0"></td>
-        </tr>
-        <tr>
-            <td><input type="number" id="planned_2" value="10"></td>
-            <td><input type="number" id="actual_2" value="0"></td>
-        </tr>
-        <tr>
-            <td><input type="number" id="planned_3" value="15"></td>
-            <td><input type="number" id="actual_3" value="0"></td>
-        </tr>
-        <tr>
-            <td><input type="number" id="planned_4" value="20"></td>
-            <td><input type="number" id="actual_4" value="0"></td>
-        </tr>
-    </table>
-</form>
 
 <script defer>
     let drawRect = function (context, x, y, w, h, fill, stroke) {
@@ -374,28 +350,18 @@
     //Test 5
     let bar_graph_canvas5 = document.getElementById("bar_graph5")
 
-    let planned_inputs = []
-    let actual_inputs = []
-
-    for (let i = 1; i <= 4; i++) {
-        planned_inputs[i] = document.getElementById("planned_" + i)
-        actual_inputs[i] = document.getElementById("actual_" + i)
-    }
-    console.log(actual_inputs)
     let update_nested_pie_chart = function () {
-        let actual_data5 = [
-            new DataPoint(actual_inputs[1].value, "Personal", "#a2de6b", "black"),
-            new DataPoint(actual_inputs[2].value, "Professional", "#ffb763", "black"),
-            new DataPoint(actual_inputs[3].value, "Huh?", "#be81f1", "black"),
-            new DataPoint(actual_inputs[4].value, "What?", "#4de79e", "black")
-        ]
+        let actual_data5 = new Array()
+        let planned_data5 = new Array()
 
-        let planned_data5 = [
-            new DataPoint(planned_inputs[1].value, "Personal", "#aac090", "black"),
-            new DataPoint(planned_inputs[2].value, "Professional", "#c0aa90", "black"),
-            new DataPoint(planned_inputs[3].value, "Huh?", "#aa90c0", "black"),
-            new DataPoint(planned_inputs[4].value, "What?", "#90c0aa", "black")
-        ]
+        @foreach (GraphData data in Model.actual)
+        {
+            @:actual_data5.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+        }
+        @foreach (GraphData data in Model.planned)
+        {
+            @:planned_data5.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+        }
 
         let context = bar_graph_canvas5.getContext("2d")
         context.clearRect(0, 0, context.width, context.height)
@@ -403,10 +369,5 @@
     }
 
     update_nested_pie_chart()
-
-    for (let i = 1; i <= 4; i++) {
-        planned_inputs[i].addEventListener("input", update_nested_pie_chart)
-        actual_inputs[i].addEventListener("input", update_nested_pie_chart)
-    }
 
 </script>
