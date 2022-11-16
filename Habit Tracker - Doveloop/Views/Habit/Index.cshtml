@@ -3,11 +3,12 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/labelsandhabitspage.css"/>
+</head>
+<h1>Habits List</h1>
+<p class ="addbutton">
+    <a  asp-action="Create"  >+</a>
 </p>
 <table class="table">
     <thead>
@@ -27,7 +28,7 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Habit.Name)
             </td>
-            <td>
+            <td> 
                 @{
                     string labelNames = "";
                     foreach (var label in item.Labels)
@@ -38,8 +39,8 @@
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Habit.Id">Details</a> |
+                <a asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a> 
+                <a asp-action="Details" asp-route-id="@item.Habit.Id">Details</a> 
                 <a asp-action="Delete" asp-route-id="@item.Habit.Id">Delete</a>
             </td>
         </tr>
