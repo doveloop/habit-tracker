@@ -4,14 +4,14 @@
     public interface ICosmosDbService
     {
         public void SetUser(string user);
-        public Task AddHabitLabelAsync(HabitLabel habit);
-        public Task DeleteHabitLabelAsync(HabitLabel id);
+        public Task AddHabitLabelAsync(HabitLabel habitLabel);
+        public Task DeleteHabitLabelAsync(HabitLabel habitLabel);
         public Task<IEnumerable<HabitLabel>> GetHabitsAsync();
         public Task<IEnumerable<HabitLabel>> GetLabelsAsync();
         public Task<HabitLabel> GetHabitLabelAsync(string id);
         public Task<IEnumerable<HabitLabel>> GetHabitsLabelsAsync();
         public Task<IEnumerable<HabitLabel>> GetHabitsLabelsAsync(string query);
-        public Task UpdateHabitLabelAsync(HabitLabel habit);
-        public Task UpdateHabitLabelAsync(HabitLabel habit, List<Guid> oldRelationIds);
+        public Task UpdateHabitLabelAsync(HabitLabel habitLabel);
+        public Task UpdateHabitLabelAsync(HabitLabel habitLabel, List<Guid> oldRelationIds);
     }
 }
