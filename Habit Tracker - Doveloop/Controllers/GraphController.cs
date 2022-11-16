@@ -1,10 +1,16 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Habit_Tracker___Doveloop.Models;
+using Habit_Tracker___Doveloop.Data;
 
 namespace Habit_Tracker___Doveloop.Controllers
 {
     public class GraphController : Controller
     {
+        private readonly ICosmosDbService _cosmosDbService;
+        public GraphController(ICosmosDbService cosmosDbService)
+        {
+            _cosmosDbService = cosmosDbService;
+        }
         public IActionResult Index()
         {
             return View(new Graph(
