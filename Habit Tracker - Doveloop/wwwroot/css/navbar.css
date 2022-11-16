@@ -18,6 +18,10 @@
     list-style: none;
 }
 
+.navbar-brand:hover {
+    text-decoration: underline;
+}
+
 .nav-item:hover {
     background-color: #dde6ed;
     border-radius: 5px;
