@@ -1,7 +1,30 @@
-﻿@{
+﻿@model Habit_Tracker___Doveloop.Models.Graph
+@{
     ViewData["Title"] = "Graphs";
 }
+
 
 <div class="text-center">
     <h1 class="display-4">Graphs Page</h1>
 </div>
+
+<h3>Pie Chart</h3>
+<canvas id="graph_canvas" width="700px" height="500px"></canvas>
+
+<script>
+    let getAllHabits = function() 
+    {
+        let output = new Array()
+    @foreach (GraphData data in Model.actual)
+    {
+        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+    }
+    @foreach (GraphData data in Model.planned)
+    {
+        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+    }
+
+        return output
+    }
+
+</script>
