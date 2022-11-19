@@ -31,7 +31,7 @@
         public async Task DeleteHabitLabelAsync(HabitLabel habitLabel)
         {
             //Remove relations
-            foreach (Guid relationId in habitLabel.RelationIds)
+            foreach (Guid relationId in habitLabel.RelationIds ?? Array.Empty<Guid>().ToList())
             {
                 HabitLabel relation = await GetHabitLabelAsync(relationId.ToString());
                 relation.RelationIds.Remove(habitLabel.Id);
