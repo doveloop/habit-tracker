@@ -12,14 +12,6 @@
     width: 100%;
 }
 
-.nav-title-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0;
-    padding: 1px 5px;
-}
-
 .navbar-pages-list {
     display: flex;
     align-items: center;
@@ -28,7 +20,7 @@
     padding: 1px 5px;
 }
 
-.nav-item, .nav-title {
+.nav-item {
     display: flex;
     align-items: center;
     padding: 0;
@@ -38,17 +30,4 @@
 .nav-item:hover {
     background-color: #dde6ed;
     border-radius: 5px;
-}
-
-
-@media (max-width: 700px) {
-    .navbar-inner {
-        flex-direction: column;
-        margin-top: 0px;
-    }
-
-    .navbar-pages-list {
-        align-self: center;
-        margin: 0px;
-    }
 }

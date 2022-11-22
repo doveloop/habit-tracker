@@ -16,24 +16,16 @@
         <!-- Navbar -->
         <nav class="navbar">
             <div class="navbar-inner">
-                <div class="nav-title-container">
-                    <h4 class="nav-title">Habit Tracker</h4>
-                </div>
                 <ul class="navbar-pages-list">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Habit" asp-action="Index">
+                            <img src="img/task_TEMP.png" alt="Habits" width="30" height="30"/>
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Habit" asp-action="Index">Habits</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Label" asp-action="Index">Labels</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Graph" asp-action="Index">Graphs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link text-dark" asp-area="" asp-controller="Graph" asp-action="Index">
+                            <img src="img/graphs_TEMP.png" alt="Graphs" width="30" height="30" />
+                        </a>
                     </li>
                 </ul>
                 <partial name="_LoginPartial" />
