@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.HabitLabel>
+﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel>
 @{
     ViewData["Title"] = "Graphs";
 }
@@ -15,19 +15,31 @@
     let getAllHabits = function() 
     {
         let output = new Array()
-        @foreach (GraphData data in Model.actual)
-        {
-            @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-        }
-        @foreach (GraphData data in Model.planned)
-        {
-            @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-        }
 
         //Expected data structure 
-        @foreach (GraphData data in Model)
+        @foreach (Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel model in Model)
         {
-            @:output.push({
+            var data = new
+            {
+                id = model.Habit.Id,
+                type = model.Habit.Type,
+                user = model.Habit.User,
+                name = model.Habit.Name,
+                relationIds = model.Habit.RelationIds,
+                labels = model.Labels.Select(l => new
+                {
+                    id = l.Id,
+                    name = l.Name
+                })
+            };
+
+            string objectString = System.Text.Json.JsonSerializer.Serialize(data);
+
+            //Console.WriteLine(objectString);
+
+            @:output.push(Json.Serialize(objectString));
+
+            /*@:output.push({
                 "id" : "@data.id", 
                 "type" : "@data.type", 
                 "user" : "@data.user",
@@ -36,7 +48,7 @@
                 "labels" : [
                     //An array of labels' names
                     ]
-            });
+            });*/
         }
 
         return output
