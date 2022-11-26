@@ -13,7 +13,8 @@ namespace Habit_Tracker___Doveloop.Controllers
         }
         public IActionResult Index()
         {
-            return View(new Graph(
+            return View(_cosmosDbService.GetHabitsLabelsAsync());
+            /*return View(new Graph(
                 new GraphData[]
                 {
                     new GraphData(5,    "Personal",     "#a2de6b"),
@@ -29,7 +30,7 @@ namespace Habit_Tracker___Doveloop.Controllers
                     new GraphData(15,   "What?",        "#90c0aa"),
                 }
                 )
-            );
+            );*/
         }
     }
 }

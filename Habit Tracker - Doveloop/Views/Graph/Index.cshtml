@@ -1,4 +1,4 @@
-﻿@model Habit_Tracker___Doveloop.Models.Graph
+﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.HabitLabel>
 @{
     ViewData["Title"] = "Graphs";
 }
@@ -15,14 +15,14 @@
     let getAllHabits = function() 
     {
         let output = new Array()
-    @foreach (GraphData data in Model.actual)
-    {
-        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-    }
-    @foreach (GraphData data in Model.planned)
-    {
-        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-    }
+        @foreach (GraphData data in Model.actual)
+        {
+            @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+        }
+        @foreach (GraphData data in Model.planned)
+        {
+            @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
+        }
 
         return output
     }
