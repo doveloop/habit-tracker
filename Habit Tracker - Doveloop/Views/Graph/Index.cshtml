@@ -24,6 +24,21 @@
             @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
         }
 
+        //Expected data structure 
+        @foreach (GraphData data in Model)
+        {
+            @:output.push({
+                "id" : "@data.id", 
+                "type" : "@data.type", 
+                "user" : "@data.user",
+                "name" : "@data.name",
+                "relationIds" : "@data.relationIds",
+                "labels" : [
+                    //An array of labels' names
+                    ]
+            });
+        }
+
         return output
     }
 
