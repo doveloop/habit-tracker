@@ -364,6 +364,6 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
 
 let graph_target = document.getElementById("graph_canvas")
 
-drawPieChartFromDP(graph_target, getAllHabits())
+//drawPieChartFromDP(graph_target, getAllHabits())
 
-
+console.log(getAllHabits())
