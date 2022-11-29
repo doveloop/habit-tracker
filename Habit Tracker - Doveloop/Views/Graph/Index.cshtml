@@ -37,8 +37,10 @@
 
             //Console.WriteLine(objectString);
 
+            //@:output.push(Json.Serialize(objectString));
             @:output.push(JSON.stringify(@objectString));
-
+            //@:output.push(JSON.stringify(@data));
+            
             /*@:output.push({
                 "id" : "@data.id", 
                 "type" : "@data.type", 
