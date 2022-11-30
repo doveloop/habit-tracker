@@ -337,8 +337,9 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
     const display_width = (width - (2 * margin))
     const display_height = (height - (2 * margin))
 
-    /*Debug lines
-    {
+    stroke = "black"
+
+    /*{
         drawLine(context, 0, 0, width, 0, "red")
         drawLine(context, 0, 0, 0, height, "red")
         drawLine(context, 0, height, width, height, "red")
@@ -348,8 +349,7 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
         drawLine(context, left_margin, margin, left_margin, height - margin, "orange")
         drawLine(context, left_margin, height - margin, width - margin, height - margin, "orange")
         drawLine(context, width - margin, margin, width - margin, height - margin, "orange")
-    }
-    */
+    } */
 
     let data_max = 0
     for (let i = 0; i < data.length; i++) {
@@ -465,6 +465,8 @@ let serveGraph = function (data, graphType)
         }
     }
 
+    graph_target.getContext("2d").clearRect(0, 0, graph_target.width, graph_target.height)
+
     switch (graphType)
     {
         case "bar":
@@ -492,5 +494,18 @@ if(getAllHabits)
 {
     let habitData = getAllHabits()
 
-    serveGraph(habitData, "line")
+    serveGraph(habitData, "line") //TODO this is where the "last viewed" will go
+
+    let graphButtons = document.querySelectorAll("#chart_filter>input[type=button]")
+    for (let i = 0; i < graphButtons.length; i++)
+    {
+        let type = graphButtons[i].id.slice(15)
+
+        graphButtons[i].addEventListener("click", function (event)
+        {
+            serveGraph(habitData, type)
+        })
+    }
+
+
 }
