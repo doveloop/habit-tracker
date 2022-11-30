@@ -128,8 +128,9 @@ let drawLine = function (context, x1, y1, x2, y2, stroke, start_cap, end_cap) {
     context.moveTo(x1, y1)
 
     const cap_size = 5
-    start_cap = start_cap.toLowerCase()
-    end_cap = end_cap.toLowerCase()
+
+    start_cap = start_cap ? start_cap.toLowerCase() : undefined
+    end_cap = end_cap ? end_cap.toLowerCase() : undefined
 
     if (start_cap) {
         if (start_cap === "circle") {
@@ -416,11 +417,31 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
     }
 }
 
+let drawLineChartFromDP = function (canvas, data_points, caps) {
+    let data = []
+    let fill = []
+    let stroke = []
+    let labels = []
+
+    for (let i = 0; i < data_points.length; i++) {
+        data.push(data_points[i].value)
+        fill.push(data_points[i].fillColor)
+        stroke.push(data_points[i].strokeColor)
+        labels.push(data_points[i].label)
+    }
+
+    drawLineChart(canvas, undefined, data, labels, fill, stroke, caps)
+}
+
+let graph_title = document.getElementById("graph_title")
 let graph_target = document.getElementById("graph_canvas")
 
-if(getAllHabits)
+let serveGraph = function (data, graphType)
 {
-    let habitData = getAllHabits()
+    graphType = graphType.toLowerCase()
+    let title = "Context"
+
+    let habitData = data
     let habitDataPoints = []
 
     for(let i = 0; i < habitData.length; i++)
@@ -439,11 +460,37 @@ if(getAllHabits)
 
             let strokeColor = getTextColorFromBackground(fillColor)
 
-            let newPoint = new DataPoint((Math.random() * 10) + 1, habitData[i].name, fillColor, strokeColor)
+            let newPoint = new DataPoint((Math.random() * 10) + 1 /*TODO GET ACTUAL ENTRIES*/, habitData[i].name, fillColor, strokeColor)
             habitDataPoints.push(newPoint)
-
         }
     }
 
-    drawBarChartFromDP(graph_target, habitDataPoints)
+    switch (graphType)
+    {
+        case "bar":
+            graph_title.innerText = `Bar Chart - ${title}`
+            drawBarChartFromDP(graph_target, habitDataPoints)
+
+            break;
+        case "pie":
+            graph_title.innerText = `Pie Chart - ${title}`
+            drawPieChartFromDP(graph_target, habitDataPoints)
+
+            break;
+        case "line":
+            graph_title.innerText = `Line Chart - ${title}`
+            drawLineChartFromDP(graph_target, habitDataPoints, "x")
+
+            break;
+        default:
+            console.log("Invalid graph type:", graphType)
+            break;
+    }
+}
+
+if(getAllHabits)
+{
+    let habitData = getAllHabits()
+
+    serveGraph(habitData, "line")
 }
