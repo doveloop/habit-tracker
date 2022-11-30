@@ -15,6 +15,7 @@
     let getAllHabits = function() 
     {
         let output = new Array()
+        let scrubbedStr
 
         //Expected data structure 
         @foreach (Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel model in Model)
@@ -34,23 +35,10 @@
             };
 
             string objectString = System.Text.Json.JsonSerializer.Serialize(data);
-                
-            //Console.WriteLine(objectString);
+              
+            @:scrubbedStr = scrubQuotes("@objectString")
 
-            //@:output.push(Json.Serialize(objectString));
-            @:output.push(JSON.parse("@objectString"));
-            //@:output.push(JSON.stringify(@data));
-            
-            /*@:output.push({
-                "id" : "@data.id", 
-                "type" : "@data.type", 
-                "user" : "@data.user",
-                "name" : "@data.name",
-                "relationIds" : "@data.relationIds",
-                "labels" : [
-                    //An array of labels' names
-                    ]
-            });*/
+            @:output.push(JSON.parse(scrubbedStr));
         }
 
         return output

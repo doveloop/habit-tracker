@@ -1,4 +1,13 @@
 ﻿/**
+ * Scrubs string from C#
+ */
+let scrubQuotes = function (str)
+{
+    const regex = /&quot;/g
+    return str.replace(regex, "\"")
+}
+
+/**
  * Returns a color from a string's hash
  * based on esmiralha's StackOverflow response (https://stackoverflow.com/a/7616484)
  */
@@ -411,5 +420,30 @@ let graph_target = document.getElementById("graph_canvas")
 
 if(getAllHabits)
 {
-    console.log(getAllHabits())
+    let habitData = getAllHabits()
+    let habitDataPoints = []
+
+    for(let i = 0; i < habitData.length; i++)
+    {
+        if(habitData[i].type === "habit")
+        {
+            let fillColor
+            if(habitData[i].labels[0])
+            {
+                fillColor = getColorFromString(habitData[i].labels[0].name)
+            }
+            else
+            {
+                fillColor = getColorFromString(habitData[i].name)
+            }
+
+            let strokeColor = getTextColorFromBackground(fillColor)
+
+            let newPoint = new DataPoint((Math.random() * 10) + 1, habitData[i].name, fillColor, strokeColor)
+            habitDataPoints.push(newPoint)
+
+        }
+    }
+
+    drawBarChartFromDP(graph_target, habitDataPoints)
 }
