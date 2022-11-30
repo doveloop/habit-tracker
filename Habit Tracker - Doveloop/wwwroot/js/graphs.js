@@ -8,6 +8,14 @@ let scrubQuotes = function (str)
 }
 
 /**
+ * Camel-caser
+ */
+let toCamelCase = function (str)
+{
+    return str.split(" ").join("_")
+}
+
+/**
  * Returns a color from a string's hash
  * based on esmiralha's StackOverflow response (https://stackoverflow.com/a/7616484)
  */
@@ -268,6 +276,11 @@ let drawPieChart = function (canvas, scale, data, labels, fill, stroke, alt_sum)
 
     if (alt_sum) { data_sum = alt_sum }
 
+    const font_size = (display_width - outer_radius) * 0.025
+
+    context.font = font_size + "px Arial"
+    context.textAlign = "center";
+
     let last_end = "north"
     for (let i = 0; i < data.length; i++) {
         //If colors are defined in a list, use the list
@@ -279,6 +292,16 @@ let drawPieChart = function (canvas, scale, data, labels, fill, stroke, alt_sum)
         next_end += last_end === "north" ? 0 : last_end //Adjust the next end by the last end
 
         last_end = drawSubCircle(context, display_width / 2, display_height / 2, outer_radius, last_end, next_end, fillColor, strokeColor)
+
+        const keySize = 20
+        drawRect(canvas.getContext("2d"), margin, (margin * i) + (keySize / 4), keySize - 2, keySize - 2, fillColor, "black")
+
+        context.strokeStyle = "black"
+        context.fillStyle = "black"
+        context.textAlign = "left"
+        context.fillText(labels[i],
+            margin + keySize,
+            (margin * i) + keySize)
     }
 }
 
@@ -339,18 +362,6 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
 
     stroke = "black"
 
-    /*{
-        drawLine(context, 0, 0, width, 0, "red")
-        drawLine(context, 0, 0, 0, height, "red")
-        drawLine(context, 0, height, width, height, "red")
-        drawLine(context, width, 0, width, height, "red")
-
-        drawLine(context, left_margin, margin, width - margin, margin, "orange")
-        drawLine(context, left_margin, margin, left_margin, height - margin, "orange")
-        drawLine(context, left_margin, height - margin, width - margin, height - margin, "orange")
-        drawLine(context, width - margin, margin, width - margin, height - margin, "orange")
-    } */
-
     let data_max = 0
     for (let i = 0; i < data.length; i++) {
         data_max = Math.max(data_max, data[i])
@@ -385,7 +396,7 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
 
     if (labelOffset) {
         context.textAlign = "center"
-        context.fillText(data[0], startPoint.x, startPoint.y + labelOffset);
+        context.fillText(data[0], startPoint.x, startPoint.y + labelOffset)
     }
 
     context.lineWidth = 2
@@ -399,7 +410,7 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
 
     if (labelOffset) {
         context.textAlign = "center"
-        context.fillText(data[1], lastPoint.x, lastPoint.y + labelOffset);
+        context.fillText(data[1], lastPoint.x, lastPoint.y + labelOffset)
     }
     for (let i = 2; i < data.length; i++) {
         context.lineWidth = 2
@@ -412,7 +423,7 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
             undefined, caps)
         if (labelOffset) {
             context.textAlign = "center"
-            context.fillText(data[i], lastPoint.x, lastPoint.y + labelOffset);
+            context.fillText(data[i], lastPoint.x, lastPoint.y + labelOffset)
         }
     }
 }
@@ -436,7 +447,7 @@ let drawLineChartFromDP = function (canvas, data_points, caps) {
 let graph_title = document.getElementById("graph_title")
 let graph_target = document.getElementById("graph_canvas")
 
-let serveGraph = function (data, graphType)
+let serveGraph = function (data, filters, graphType)
 {
     graphType = graphType.toLowerCase()
     let title = "Context"
@@ -461,7 +472,29 @@ let serveGraph = function (data, graphType)
             let strokeColor = getTextColorFromBackground(fillColor)
 
             let newPoint = new DataPoint((Math.random() * 10) + 1 /*TODO GET ACTUAL ENTRIES*/, habitData[i].name, fillColor, strokeColor)
-            habitDataPoints.push(newPoint)
+
+            //Using inclusive filter
+            let includeInFilter = false
+            let filtersSet = false
+
+            //Check if any checked labels are present in this habit
+            if(filters.labels.length > 0)
+            {
+                filtersSet = true
+
+                for (let j = 0; j < habitData[i].labels.length; j++)
+                {
+                    if(filters.labels.indexOf(habitData[i].labels[j].name) >= 0)
+                    {
+                        includeInFilter = true
+                    }
+                }
+            }
+
+            if(includeInFilter || (!includeInFilter && !filtersSet))
+            {
+                habitDataPoints.push(newPoint)
+            }
         }
     }
 
@@ -490,11 +523,45 @@ let serveGraph = function (data, graphType)
     }
 }
 
+let copyGraph = function ()
+{
+    //Credit: Adriano Tumminelli on StackOverflow (https://stackoverflow.com/a/57546936)
+    graph_target.toBlob(function(blob) {
+        const item = new ClipboardItem({ "image/png": blob })
+        navigator.clipboard.write([item])
+    })
+}
+
+let saveGraph = function (link)
+{
+    link.setAttribute('download', graph_title.innerText+'.png');
+    link.setAttribute('href', graph_target.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+}
+
+//Only executes on the Graphs page
 if(getAllHabits)
 {
     let habitData = getAllHabits()
+    let labels = []
 
-    serveGraph(habitData, "line") //TODO this is where the "last viewed" will go
+    let filters = {
+        labels: [],
+        dateFrom: -1,
+        dateTo: -1
+    }
+
+    for (let i = 0; i < habitData.length; i++)
+    {
+        for (let j = 0; j < habitData[i].labels.length; j++)
+        {
+            if(labels.indexOf(habitData[i].labels[j].name) === -1)
+            {
+                labels.push(habitData[i].labels[j].name)
+            }
+        }
+    }
+
+    serveGraph(habitData, filters, "pie") //TODO this is where the "last viewed" will go
 
     let graphButtons = document.querySelectorAll("#chart_filter>input[type=button]")
     for (let i = 0; i < graphButtons.length; i++)
@@ -503,9 +570,70 @@ if(getAllHabits)
 
         graphButtons[i].addEventListener("click", function (event)
         {
-            serveGraph(habitData, type)
+            serveGraph(habitData, filters, type)
         })
     }
 
+    document.getElementById("expand_share_menu").addEventListener("click", function (event) {
+        document.getElementById("share_menu_dropdown").classList.toggle("hidden")
+    })
 
+    let copyGraphButton = document.getElementById("copy_graph")
+    let saveGraphButton = document.getElementById("save_graph")
+
+    copyGraphButton.addEventListener("click", function (event)
+    {
+        copyGraph()
+        event.preventDefault()
+    })
+    saveGraphButton.addEventListener("click", function (event)
+    {
+        saveGraph(saveGraphButton)
+    })
+
+    let labelFilterWrapper = document.getElementById("label_filter_wrapper")
+    let labelChecklist = document.getElementById("label_checklist")
+
+    for (let i = 0; i < labels.length; i++)
+    {
+        let nextItem = document.createElement("input")
+        nextItem.id = toCamelCase(labels[i])
+        nextItem.name = toCamelCase(labels[i])
+        nextItem.type = "checkbox"
+        nextItem.value = labels[i]
+
+        let nextLabel = document.createElement("label")
+        nextLabel.for = toCamelCase(labels[i])
+        nextLabel.innerText = labels[i]
+
+        labelChecklist.appendChild(nextItem)
+        labelChecklist.appendChild(nextLabel)
+    }
+
+    labelFilterWrapper.addEventListener("click", function (event) {
+        labelChecklist.classList.toggle("hidden")
+        event.preventDefault()
+    })
+
+    let dateStartFilterForm = document.getElementById("label_date_start")
+    let dateEndFilterForm = document.getElementById("label_date_end")
+
+    let chartUpdateFilterForm = document.getElementById("chart_filter")
+    chartUpdateFilterForm.addEventListener("change", function (event)
+    {
+        let newLabelFilters = []
+        for (let i = 0; i < labelChecklist.children.length; i++)
+        {
+            if(labelChecklist.children[i].checked)
+            {
+                newLabelFilters.push(labelChecklist.children[i].value)
+            }
+        }
+
+        filters.labels = newLabelFilters
+
+        filters.dateFrom = dateStartFilterForm.value === "" ? -1 : dateStartFilterForm.value
+        filters.dateTo = dateEndFilterForm.value === "" ? -1 : dateEndFilterForm.value
+
+    })
 }
