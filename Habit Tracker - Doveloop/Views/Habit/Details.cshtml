@@ -17,6 +17,12 @@
             @Html.DisplayFor(model => model.Habit.Name)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Habit.Units)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Habit.Units)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Labels)
         </dt>
         <dd class = "col-sm-10">
@@ -27,6 +33,15 @@
                 if (labelNames.Length == 0) labelNames = "No labels";
                 else labelNames = labelNames.Remove(labelNames.Length - 2, 2);
                 @labelNames;
+            }
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Habit.Entries)
+        </dt>
+        <dd class = "col-sm-10">
+            @{
+                string entries = "";
+                @entries;
             }
         </dd>
     </dl>
