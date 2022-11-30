@@ -34,11 +34,11 @@
             };
 
             string objectString = System.Text.Json.JsonSerializer.Serialize(data);
-
+                
             //Console.WriteLine(objectString);
 
             //@:output.push(Json.Serialize(objectString));
-            @:output.push(JSON.stringify(@objectString));
+            @:output.push(JSON.parse("@objectString"));
             //@:output.push(JSON.stringify(@data));
             
             /*@:output.push({

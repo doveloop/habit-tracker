@@ -1,4 +1,49 @@
 ﻿/**
+ * Returns a color from a string's hash
+ * based on esmiralha's StackOverflow response (https://stackoverflow.com/a/7616484)
+ */
+let getColorFromString = function (str)
+{
+    let output = "#"
+    let hash = 0
+    let chr
+
+    if (str.length === 0) return "#000"
+
+    for(let i = 1; i <= 3; i++)
+    {
+        for (let j = (str.length / 3) * (i - 1); j < (str.length / 3) * i; j++)
+        {
+            chr = str.charCodeAt(j);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0; // Convert to 32bit integer
+        }
+        let next = "00" + Math.abs(hash % 256).toString(16)
+        next = next.slice(-2)
+
+        output = `${output}${next}`
+    }
+
+    return output
+}
+
+/**
+ * Choose text color based on a background color
+ * based on Mark Ransom's StackOverflow response  (https://stackoverflow.com/a/3943023)
+ */
+let getTextColorFromBackground = function(background)
+{
+    let output
+    let red = parseInt(background.slice(1,3), 16)
+    let green = parseInt(background.slice(3,5), 16)
+    let blue = parseInt(background.slice(5,7), 16)
+
+    output = (red*0.299 + green*0.587 + blue*0.114) > 150 ? "#000000" : "#ffffff"
+
+    return output
+}
+
+/**
  * Draws a rectangle to the specified HTML5 Canvas 2d context
  * @param context - HTML5 canvas 2d context
  * @param x
@@ -364,6 +409,7 @@ let drawLineChart = function (canvas, scale, data, labels, fill, stroke, caps) {
 
 let graph_target = document.getElementById("graph_canvas")
 
-//drawPieChartFromDP(graph_target, getAllHabits())
-
-console.log(getAllHabits())
+if(getAllHabits)
+{
+    console.log(getAllHabits())
+}
