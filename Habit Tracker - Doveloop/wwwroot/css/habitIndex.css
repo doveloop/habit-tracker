@@ -38,18 +38,19 @@ tbody{
     
     
 }
-tbody>tr{
-    display:flex;
-    flex-direction:column;
-    margin:4px;
-    background-color:antiquewhite;
-    height:fit-content;
-    min-height: 150px;
-    /*border:1px solid grey;*/
-    /*border-radius:4px;*/
-    min-width:200px;
-    box-shadow: 10px, 10px, 10px, rgb(0, 0, 0, 1);
-}
+    tbody > tr {
+        display: flex;
+        flex-direction: column;
+        margin: 4px;
+        padding: 4px;
+        background-color: antiquewhite;
+        height: fit-content;
+        min-height: 150px;
+        border: 2px solid grey;
+        border-radius: 4px;
+        min-width: 200px;
+        box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+    }
 td{
     border-bottom: 0px;
 }
