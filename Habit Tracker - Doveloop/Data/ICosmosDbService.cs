@@ -5,7 +5,7 @@
     {
         public void SetUser(string user);
 
-        public Task<UserProfile> GetProfileAsync(string id);
+        public Task<UserProfile> GetProfileAsync();
         public Task UpdateProfileAsync(UserProfile profile);
         public Task AddHabitEntryAsync(string id, DateTime time, float units);
         public Task AddHabitLabelAsync(HabitLabel habitLabel);

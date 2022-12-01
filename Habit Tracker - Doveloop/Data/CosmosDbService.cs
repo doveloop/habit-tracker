@@ -24,17 +24,11 @@
             _partitionKey = new PartitionKey(user);
         }
 
-        public async Task<UserProfile> GetProfileAsync(string id)
+        public async Task<UserProfile> GetProfileAsync()
         {
-            try
-            {
-                ItemResponse<UserProfile> response = await _profileContainer.ReadItemAsync<UserProfile>(id, _partitionKey);
-                return response.Resource;
-            }
-            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
-            {
-                return null;
-            }
+            var query = _profileContainer.GetItemQueryIterator<UserProfile>(new QueryDefinition("SELECT TOP 1 * FROM c WHERE c.user = \"" + _user + "\""));
+            var response = await query.ReadNextAsync();
+            return response.FirstOrDefault();
         }
 
         public async Task UpdateProfileAsync(UserProfile profile)
@@ -74,12 +68,12 @@
 
         public async Task<IEnumerable<HabitLabel>> GetHabitsAsync()
         {
-            return await GetHabitsLabelsAsync("Select * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"habit\"");
+            return await GetHabitsLabelsAsync("SELECT * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"habit\"");
         }
 
         public async Task<IEnumerable<HabitLabel>> GetLabelsAsync()
         {
-            return await GetHabitsLabelsAsync("Select * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"label\"");
+            return await GetHabitsLabelsAsync("SELECT * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"label\"");
         }
 
         public async Task<HabitLabel> GetHabitLabelAsync(string id)
