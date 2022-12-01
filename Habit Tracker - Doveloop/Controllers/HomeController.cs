@@ -1,4 +1,5 @@
-﻿using Habit_Tracker___Doveloop.Models;
+﻿using Habit_Tracker___Doveloop.Data;
+using Habit_Tracker___Doveloop.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,9 +7,15 @@ namespace Habit_Tracker___Doveloop.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ICosmosDbService _cosmosDbService;
+        public HomeController(ICosmosDbService cosmosDbService)
+        {
+            _cosmosDbService = cosmosDbService;
+        }
+
         public IActionResult Index()
         {
-            //HttpContext.User.Identity.IsAuthenticated;
+            _cosmosDbService.SetUser(HttpContext.User.Identity.Name);
             ViewBag.UserName = HttpContext.User.Identity.Name;
             return View();
         }

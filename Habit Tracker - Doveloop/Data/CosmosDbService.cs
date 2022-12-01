@@ -7,19 +7,39 @@
     {
         private CosmosClient _client;
         private Container _habitLabelContainer;
+        private Container _profileContainer;
         private string _user;
         private PartitionKey _partitionKey;
 
-        public CosmosDbService(CosmosClient dbClient, string habitLabelDbName, string containerName)
+        public CosmosDbService(CosmosClient dbClient, string DbName, string habitLabelContainerName, string profileContainerName)
         {
             _client = dbClient;
-            _habitLabelContainer = _client.GetContainer(habitLabelDbName, containerName);
+            _habitLabelContainer = _client.GetContainer(DbName, habitLabelContainerName);
+            _profileContainer = _client.GetContainer(DbName, profileContainerName);
         }
 
         public void SetUser(string user)
         {
             _user = user;
             _partitionKey = new PartitionKey(user);
+        }
+
+        public async Task<UserProfile> GetProfileAsync(string id)
+        {
+            try
+            {
+                ItemResponse<UserProfile> response = await _profileContainer.ReadItemAsync<UserProfile>(id, _partitionKey);
+                return response.Resource;
+            }
+            catch (CosmosException ex) when (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+        }
+
+        public async Task UpdateProfileAsync(UserProfile profile)
+        {
+            await _profileContainer.UpsertItemAsync(profile, _partitionKey);
         }
 
         #region HabitsLabels
