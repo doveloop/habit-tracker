@@ -11,8 +11,13 @@ namespace Habit_Tracker___Doveloop.Controllers
         {
             _cosmosDbService = cosmosDbService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            UserProfile profile = await _cosmosDbService.GetProfileAsync();
+            if(profile != null && profile.GraphData != null)
+            {
+                //can use profile.GraphData here
+            }
             return View(new Graph(
                 new GraphData[]
                 {
