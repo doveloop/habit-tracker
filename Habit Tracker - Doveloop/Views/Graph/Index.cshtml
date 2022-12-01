@@ -1,4 +1,4 @@
-﻿@model Habit_Tracker___Doveloop.Models.Graph
+﻿@model IEnumerable<Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel>
 @{
     ViewData["Title"] = "Graphs";
 }
@@ -8,21 +8,61 @@
     <h1 class="display-4">Graphs Page</h1>
 </div>
 
-<h3>Pie Chart</h3>
+<form id="chart_filter">
+    <label for="label_filter">Label</label>
+    <span id="label_filter_wrapper"><input id="label_filter" value="Click to choose labels..." disabled/></span>
+        <div id="label_checklist" class="hidden"></div>
+
+    <label for="label_date_start">From...</label>
+    <input id="label_date_start" type="date"/>
+    <input id="label_date_end" type="date"/>
+    <label for="label_date_end">...To</label>
+
+    <input type="button" id="generate_graph_bar_week" value="Weekly Chart"/>
+    <input type="button" id="generate_graph_bar" value="Bar Chart"/>
+    <input type="button" id="generate_graph_pie" value="Pie Chart"/>
+    <!--input type="button" id="generate_graph_line" value="Line Chart"/-->
+</form>
+
+<h3 id="graph_title">Choose a Chart</h3>
 <canvas id="graph_canvas" width="700px" height="500px"></canvas>
+<div id="share_menu">
+    <button id="expand_share_menu">Share</button>
+    <div id="share_menu_dropdown" class="hidden">
+        <a href="#" id="copy_graph">Copy Graph</a>
+        <a href="#" id="save_graph">Save Graph</a>
+    </div>
+</div>
 
 <script>
     let getAllHabits = function() 
     {
         let output = new Array()
-    @foreach (GraphData data in Model.actual)
-    {
-        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-    }
-    @foreach (GraphData data in Model.planned)
-    {
-        @:output.push(new DataPoint("@data.value", "@data.label", "@data.color", "black"));
-    }
+        let scrubbedStr
+
+        //Expected data structure 
+        @foreach (Habit_Tracker___Doveloop.Models.ViewModels.HabitViewModel model in Model)
+        {
+            var data = new
+            {
+                id = model.Habit.Id,
+                type = model.Habit.Type,
+                user = model.Habit.User,
+                name = model.Habit.Name,
+                relationIds = model.Habit.RelationIds,
+                labels = model.Labels.Select(l => new
+                {
+                    id = l.Id,
+                    name = l.Name
+                })
+            };
+
+            string objectString = System.Text.Json.JsonSerializer.Serialize(data);
+              
+            @:scrubbedStr = scrubQuotes("@objectString")
+
+            @:output.push(JSON.parse(scrubbedStr));
+        }
 
         return output
     }

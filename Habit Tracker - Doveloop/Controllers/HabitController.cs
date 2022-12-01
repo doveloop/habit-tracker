@@ -33,6 +33,12 @@ namespace Habit_Tracker___Doveloop.Controllers
             return viewModels;
         }
 
+        public async Task<IActionResult> AddHabitEntry(string id, float units)
+        {
+            await _cosmosDbService.AddHabitEntryAsync(id, DateTime.UtcNow, units);
+            return RedirectToAction("Index");
+        }
+
         public async Task<IActionResult> Index()
         {
             _cosmosDbService.SetUser(HttpContext.User.Identity.Name);
@@ -44,16 +50,18 @@ namespace Habit_Tracker___Doveloop.Controllers
             HabitLabel habit = new HabitLabel();
             habit.User = HttpContext.User.Identity.Name;
             habit.Type = "habit";
+            //habit.Units = "";;//could make a default unit
             return View(habit);
         }
 
         [HttpPost]
         [ActionName("Create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateAsync([Bind("Id,Type,User,Name")] HabitLabel habit)
+        public async Task<IActionResult> CreateAsync([Bind("Id,Type,User,Name,Units")] HabitLabel habit)
         {
             habit.RelationIds = new List<Guid>();
-            if(!string.IsNullOrEmpty(habit.Name) && habit.Type == "habit" && habit.User != null && habit.User == HttpContext.User.Identity.Name)
+            habit.Entries = new List<HabitEntry>();
+            if (!string.IsNullOrEmpty(habit.Name) && !string.IsNullOrEmpty(habit.Units) && habit.Type == "habit" && habit.User != null && habit.User == HttpContext.User.Identity.Name)
             {
                 await _cosmosDbService.AddHabitLabelAsync(habit);
                 return RedirectToAction("Index");
@@ -99,7 +107,7 @@ namespace Habit_Tracker___Doveloop.Controllers
         [HttpPost]
         [ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditAsync(string id, string habitName, string[] selectedLabels)
+        public async Task<IActionResult> EditAsync(string id, string habitName, string habitUnits, string[] selectedLabels)
         {
             if (id == null)
             {
@@ -116,6 +124,7 @@ namespace Habit_Tracker___Doveloop.Controllers
             try
             {
                 habit.Name = habitName;
+                habit.Units = habitUnits;
                 List<Guid> oldLabelIds = habit.RelationIds;
                 habit.RelationIds = selectedLabels.ToList().ConvertAll(Guid.Parse);
                 await _cosmosDbService.UpdateHabitLabelAsync(habit, oldLabelIds);

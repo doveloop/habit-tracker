@@ -49,6 +49,7 @@
                 <a asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a> 
                 <a asp-action="Details" asp-route-id="@item.Habit.Id">Details</a> 
                 <a asp-action="Delete" asp-route-id="@item.Habit.Id">Delete</a>
+                <a asp-action="AddHabitEntry" asp-route-id="@item.Habit.Id" asp-route-units="1" >Add Entry</a>
             </td>
         </tr>
 }
