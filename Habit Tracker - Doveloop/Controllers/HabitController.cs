@@ -36,7 +36,7 @@ namespace Habit_Tracker___Doveloop.Controllers
         public async Task<IActionResult> AddHabitEntry(string id, float units)
         {
             await _cosmosDbService.AddHabitEntryAsync(id, DateTime.UtcNow, units);
-            return await Index();
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> Index()

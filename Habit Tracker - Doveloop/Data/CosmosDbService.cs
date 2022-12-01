@@ -27,9 +27,9 @@
         public async Task AddHabitEntryAsync(string id, DateTime time, float units)
         {
             HabitLabel habit = await GetHabitLabelAsync(id);
-            habit.Entries.Add(new HabitEntry
+            habit.Entries.Insert(0, new HabitEntry
             {
-                dateTime = time,//.ToString(),
+                dateTime = time,
                 Units = units
             });
             await UpdateHabitLabelAsync(habit);
