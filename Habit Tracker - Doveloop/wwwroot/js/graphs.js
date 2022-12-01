@@ -538,6 +538,17 @@ let saveGraph = function (link)
     link.setAttribute('href', graph_target.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 }
 
+let labelItems = document.getElementsByClassName("label")
+
+for(let i = 0; i < labelItems.length; i++)
+{
+    let content = labelItems[i].innerText
+    let color = getColorFromString(content)
+
+    labelItems[i].style.backgroundColor = color
+    labelItems[i].style.color = getTextColorFromBackground(color)
+}
+
 //Only executes on the Graphs page
 if(getAllHabits)
 {
