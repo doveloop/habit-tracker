@@ -7,5 +7,7 @@
         public Guid Id { get; set; } = Guid.NewGuid();
         [JsonProperty(PropertyName = "user")]
         public string User { get; set; }
+        [JsonProperty(PropertyName = "graphData")]
+        public GraphData GraphData { get; set; }
     }
 }
