@@ -33,6 +33,12 @@ namespace Habit_Tracker___Doveloop.Controllers
             return viewModels;
         }
 
+        public async Task<IActionResult> AddHabitEntry(string id, float units)
+        {
+            await _cosmosDbService.AddHabitEntryAsync(id, DateTime.UtcNow, units);
+            return await Index();
+        }
+
         public async Task<IActionResult> Index()
         {
             _cosmosDbService.SetUser(HttpContext.User.Identity.Name);
@@ -54,7 +60,8 @@ namespace Habit_Tracker___Doveloop.Controllers
         public async Task<IActionResult> CreateAsync([Bind("Id,Type,User,Name,Units")] HabitLabel habit)
         {
             habit.RelationIds = new List<Guid>();
-            if(!string.IsNullOrEmpty(habit.Name) && !string.IsNullOrEmpty(habit.Units) && habit.Type == "habit" && habit.User != null && habit.User == HttpContext.User.Identity.Name)
+            habit.Entries = new List<HabitEntry>();
+            if (!string.IsNullOrEmpty(habit.Name) && !string.IsNullOrEmpty(habit.Units) && habit.Type == "habit" && habit.User != null && habit.User == HttpContext.User.Identity.Name)
             {
                 await _cosmosDbService.AddHabitLabelAsync(habit);
                 return RedirectToAction("Index");

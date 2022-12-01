@@ -4,9 +4,9 @@
     public class HabitEntry
     {
         [JsonProperty(PropertyName = "dateTime")]
-        public string DateTime { get; set; }
+        public DateTime dateTime { get; set; }
 
         [JsonProperty(PropertyName = "units")]
-        public int Units { get; set; }
+        public float Units { get; set; }
     }
 }

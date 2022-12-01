@@ -41,6 +41,12 @@
         <dd class = "col-sm-10">
             @{
                 string entries = "";
+                foreach(var entry in Model.Habit.Entries)
+                {
+                    entries += entry.dateTime.ToLocalTime() + ", ";
+                }
+                if (entries.Length == 0) entries = "No entries";
+                else entries = entries.Remove(entries.Length - 2, 2);
                 @entries;
             }
         </dd>

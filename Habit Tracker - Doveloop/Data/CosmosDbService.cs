@@ -23,6 +23,17 @@
         }
 
         #region HabitsLabels
+
+        public async Task AddHabitEntryAsync(string id, DateTime time, float units)
+        {
+            HabitLabel habit = await GetHabitLabelAsync(id);
+            habit.Entries.Add(new HabitEntry
+            {
+                dateTime = time,//.ToString(),
+                Units = units
+            });
+            await UpdateHabitLabelAsync(habit);
+        }
         public async Task AddHabitLabelAsync(HabitLabel habitLabel)
         {
             await _habitLabelContainer.CreateItemAsync<HabitLabel>(habitLabel, _partitionKey);
