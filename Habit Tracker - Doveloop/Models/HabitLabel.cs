@@ -15,6 +15,12 @@
         [JsonProperty(PropertyName = "name")]
         public string Name { get; set; }
 
+        [JsonProperty(PropertyName = "units")]
+        public string Units { get; set; }
+
+        [JsonProperty(PropertyName = "entries")]
+        public List<HabitEntry> Entries { get; set; }
+
         [JsonProperty(PropertyName = "relationIds")]//Habits have label ids, labels have habit ids
         public List<Guid> RelationIds { get; set; }
     }

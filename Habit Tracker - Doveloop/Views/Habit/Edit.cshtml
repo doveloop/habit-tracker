@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/editHabit.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/habits.css" />
 </head>
 
 <h1>Edit</h1>
@@ -12,7 +12,7 @@
 <h4>Habit</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 card">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Habit.Id" />
@@ -22,6 +22,9 @@
                 <label asp-for="Habit.Name" class="control-label"></label>
                 <input asp-for="Habit.Name" class="form-control" name="habitName" />
                 <span asp-validation-for="Habit.Name" class="text-danger"></span>
+                <label asp-for="Habit.Units" class="control-label"></label>
+                <input asp-for="Habit.Units" class="form-control" name="habitUnits" />
+                <span asp-validation-for="Habit.Units" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <div class="col-md-offset-2 col-md-10">
@@ -37,8 +40,8 @@
                                     if(count++ % tableCols == 0) {
                                         @:</tr><tr>
                                     }
-                                    @:<td>
-                                        <input type="checkbox"
+                                    @:<td class="label">
+                                        <input type="checkbox" class="checkbox"
                                             name="selectedLabels"
                                             value="@Label.Id"
                                             @(Html.Raw(Model.Habit.RelationIds.Contains(Label.Id) ? "checked=\"checked\"" : "")) />
@@ -57,8 +60,9 @@
     </div>
 </div>
 
+
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="interaction-buttons" asp-controller="Label" asp-action = "Index" >Labels List</a>
 </div>
 
 @section Scripts {
