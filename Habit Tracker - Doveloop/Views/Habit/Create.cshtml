@@ -26,7 +26,27 @@
                 <input asp-for="Units" class="form-control" />
                 <span asp-validation-for="Units" class="text-danger"></span>
             </div>
-            
+             @{
+                                int count = 0;
+                                int tableCols = 3;
+                                List<Habit_Tracker___Doveloop.Models.ViewModels.AppliedData> labels = ViewBag.LabelViewModel;
+
+                                foreach (var habit in labels)
+                                {
+                                    if(count++ % tableCols == 0) {
+                                            @:</tr><tr>
+                                    }
+                                        @:<td class="habit">
+                                            <input class="checkbox" type="checkbox"
+                                                name="selectedHabits"
+                                                value="@habit.Id"
+                                                @(Html.Raw(Model.Label.RelationIds.Contains(habit.Id) ? "checked=\"checked\"" : "")) />
+                                                @habit.Name
+                                        @:</td>
+                                }
+                                    @:</tr>
+                            }
+                    }
             <div class="form-group create-button">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
