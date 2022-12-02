@@ -560,8 +560,14 @@ if(getAllHabits)
             }
         }
     }
+    
+    for (let i = 0; i < previousFilter.filteredLabels.length; i++) {
+        filters.labels.push(previousFilter.filteredLabels[i]);
+    }
 
-    serveGraph(habitData, filters, "pie") //TODO this is where the "last viewed" will go
+    console.log(filters);
+    console.log(previousFilter);
+    serveGraph(habitData, filters, previousFilter.graphType ?? "pie") //TODO this is where the "last viewed" will go
 
     let graphButtons = document.querySelectorAll("#chart_filter>input[type=button]")
     for (let i = 0; i < graphButtons.length; i++)

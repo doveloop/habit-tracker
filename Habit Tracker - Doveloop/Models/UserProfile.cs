@@ -9,5 +9,11 @@
         public string User { get; set; }
         [JsonProperty(PropertyName = "graphData")]
         public GraphData GraphData { get; set; }
+
+        public UserProfile(string _user)
+        {
+            User = _user;
+            GraphData = new GraphData();
+        }
     }
 }

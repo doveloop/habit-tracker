@@ -35,6 +35,7 @@
 </div>
 
 <script>
+    let previousFilter = @Html.Raw(Json.Serialize(ViewBag.PreviousGraph));
     let getAllHabits = function() 
     {
         let output = new Array()

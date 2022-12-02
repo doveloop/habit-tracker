@@ -28,7 +28,7 @@
         {
             var query = _profileContainer.GetItemQueryIterator<UserProfile>(new QueryDefinition("SELECT TOP 1 * FROM c WHERE c.user = \"" + _user + "\""));
             var response = await query.ReadNextAsync();
-            return response.FirstOrDefault();
+            return response.FirstOrDefault() ?? new UserProfile(_user);
         }
 
         public async Task UpdateProfileAsync(UserProfile profile)
