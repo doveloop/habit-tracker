@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/editHabit.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/habits.css" />
 </head>
 
 <h1>Edit</h1>
@@ -12,7 +12,7 @@
 <h4>Habit</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4 card">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Habit.Id" />
@@ -41,7 +41,7 @@
                                         @:</tr><tr>
                                     }
                                     @:<td class="label">
-                                        <input type="checkbox"
+                                        <input type="checkbox" class="checkbox"
                                             name="selectedLabels"
                                             value="@Label.Id"
                                             @(Html.Raw(Model.Habit.RelationIds.Contains(Label.Id) ? "checked=\"checked\"" : "")) />
@@ -60,11 +60,9 @@
     </div>
 </div>
 
+
 <div>
-    <a asp-action="Index">Back to List</a>
-</div>
-<div>
-    <a asp-controller="Label" asp-action = "Index" >See Labels</a>
+    <a class="interaction-buttons" asp-controller="Label" asp-action = "Index" >Labels List</a>
 </div>
 
 @section Scripts {

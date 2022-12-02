@@ -38,9 +38,10 @@ tbody{
     
     
 }
-    tbody > tr {
+.card {
         display: flex;
         flex-direction: column;
+        flex-wrap:nowrap;
         margin: 4px;
         padding: 4px;
         background-color: antiquewhite;
@@ -50,7 +51,7 @@ tbody{
         border-radius: 4px;
         min-width: 200px;
         box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
-    }
+}
 td{
     border-bottom: 0px;
 }
@@ -61,12 +62,18 @@ a{
 addbutton{
     color:red;
 }
-tbody>tr>td:nth-child(3){
+.interaction-buttons {
+    padding-bottom: 3px;
+    padding-top: 3px;
+
+    padding-left:7px;
+    padding-right:7px;
+    border: 2px solid black;
+    border-radius: 400px;
     
-    display:flex;
-    flex-direction: row;
-    flex-wrap:wrap;
-    margin-top:auto;
+    background-color:lightblue;
+    margin: 5px;
+    
 }
 tbody > tr > td:nth-child(3)>a{
     margin-left: 5px;
@@ -80,7 +87,33 @@ thead{
     padding: 5px;
     width: fit-content;
     margin: 2px;
+    border-radius: 4px;
+    border: 2px solid darkgreen;
+    display:flex;
+    flex-wrap: nowrap;
+    align-self: flex-start;
+    
+}
+.name{
+    font-family: Arial;
+    font-size:x-large;
+    font-style:normal;
 
+}
+.nolabels{
+    font-style:italic;
+    padding: 5px;
+    margin:4px;
 
+}
+.checkbox{
+    margin-right:2px;
+}
+
+.create-button{
+    padding:5px;
+}
+.table{
+    column-count:auto;
 }
 
