@@ -33,7 +33,7 @@ namespace Habit_Tracker___Doveloop.Controllers
             return viewModels;
         }
 
-        private async void CreateLabelViewModel(List<HabitLabel> allLabels)
+        private void CreateLabelViewModel(List<HabitLabel> allLabels)
         {
             List<AppliedData> labelViewModel = new List<AppliedData>();
             allLabels.ForEach(label =>
@@ -73,8 +73,8 @@ namespace Habit_Tracker___Doveloop.Controllers
             HabitLabel habit = new HabitLabel();
             habit.User = HttpContext.User.Identity.Name;
             habit.Type = "habit";
-            CreateLabelViewModel((await _cosmosDbService.GetLabelsAsync()).ToList());
             //habit.Units = "";;//could make a default unit
+            CreateLabelViewModel((await _cosmosDbService.GetLabelsAsync()).ToList());
             return View(habit);
         }
 
