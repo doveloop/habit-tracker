@@ -12,6 +12,17 @@
         [JsonProperty(PropertyName = "graphType")]
         public string GraphType { get; set; }
 
+        public object Output()
+        {
+            return new
+            {
+                FilteredLabels = FilteredLabels,
+                StartDate = StartDate == null ? null : StartDate.Value.ToString("yyyy-MM-dd"),
+                EndDate = EndDate == null ? null : EndDate.Value.ToString("yyyy-MM-dd"),
+                GraphType = GraphType
+            };
+        }
+
         public GraphData()
         {
             FilteredLabels = new List<string>();

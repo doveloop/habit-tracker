@@ -564,6 +564,8 @@ if(getAllHabits)
     for (let i = 0; i < previousFilter.filteredLabels.length; i++) {
         filters.labels.push(previousFilter.filteredLabels[i]);
     }
+    filters.dateFrom = previousFilter.startDate ?? -1;
+    filters.dateTo = previousFilter.endDate ?? -1;
 
     console.log(filters);
     console.log(previousFilter);
@@ -640,6 +642,6 @@ if(getAllHabits)
 
         filters.dateFrom = dateStartFilterForm.value === "" ? -1 : dateStartFilterForm.value
         filters.dateTo = dateEndFilterForm.value === "" ? -1 : dateEndFilterForm.value
-
+        console.log(filters.dateFrom);
     })
 }
