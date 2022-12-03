@@ -1,0 +1,119 @@
+﻿body {
+    
+}
+
+p {
+    display:flex;
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    height: 9vw;
+    width: 9vw;
+    border-radius: 30vw;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.25);
+    background-color: antiquewhite;
+    text-align:center;
+    align-items:center;
+    justify-content:center;
+    font-size:8vw;
+    font-size:80px;
+    max-height:80px;
+    max-width:80px;
+    
+    
+    
+}
+
+
+th{
+    color:lightgrey;
+}
+tbody{
+    margin: 10px;
+    display:flex;
+    flex-direction:row;
+    border-collapse:collapse;
+    width: fit-content;
+    flex-wrap:wrap;
+    
+    
+}
+.card {
+        display: flex;
+        flex-direction: column;
+        flex-wrap:nowrap;
+        margin: 4px;
+        padding: 4px;
+        background-color: antiquewhite;
+        height: fit-content;
+        min-height: 150px;
+        border: 2px solid grey;
+        border-radius: 4px;
+        min-width: 200px;
+        box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+}
+td{
+    border-bottom: 0px;
+}
+a{
+    text-decoration:none;
+    color:black;
+}
+addbutton{
+    color:red;
+}
+.interaction-buttons {
+    padding-bottom: 3px;
+    padding-top: 3px;
+
+    padding-left:7px;
+    padding-right:7px;
+    border: 2px solid black;
+    border-radius: 400px;
+    
+    background-color:lightblue;
+    margin: 5px;
+    
+}
+tbody > tr > td:nth-child(3)>a{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+thead{
+    display:none;
+}
+
+.label{
+    padding: 5px;
+    width: fit-content;
+    margin: 2px;
+    border-radius: 4px;
+    border: 2px solid darkgreen;
+    display:flex;
+    flex-wrap: nowrap;
+    align-self: flex-start;
+    
+}
+.name{
+    font-family: Arial;
+    font-size:x-large;
+    font-style:normal;
+
+}
+.nolabels{
+    font-style:italic;
+    padding: 5px;
+    margin:4px;
+
+}
+.checkbox{
+    margin-right:2px;
+}
+
+.create-button{
+    padding:5px;
+}
+.table{
+    column-count:auto;
+}
+

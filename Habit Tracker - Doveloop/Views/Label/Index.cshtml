@@ -4,13 +4,13 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Labels List</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class = "interaction-buttons" asp-action="Create">Create New</a>
 </p>
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/labelsandhabitspage.css" />
+    <link rel="stylesheet" type="text/css" href="/css/labels.css" />
 </head>
 <table class="table">
     <thead>
@@ -25,25 +25,29 @@
         </tr>
     </thead>
     <tbody>
+       
 @foreach (var item in Model) {
-        <tr>
-            <td>
+        <tr class="card">
+            <td class="label name">
                 @Html.DisplayFor(modelItem => item.Label.Name)
             </td>
+             
             <td>
-                @{
-                    string habitNames = "";
-                    foreach (var habit in item.Habits)
-                        habitNames += habit.Name + ", ";
-                    if (habitNames.Length == 0) habitNames = "No labels";
-                    else habitNames = habitNames.Remove(habitNames.Length - 2, 2);
-                    @habitNames;
-                }
+                    @foreach (var habit in item.Habits){
+                        <div class="habit">
+                            @habit.Name
+                            </div>
+                    }
+                    @if(item.Habits.Count==0){
+                        <div class="nohabits">No Habits</div>
+                    }
+                    
+                
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Label.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Label.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Label.Id">Delete</a>
+                <a class = "interaction-buttons" asp-action="Edit" asp-route-id="@item.Label.Id">Edit</a> |
+                    <a class="interaction-buttons" asp-action="Details" asp-route-id="@item.Label.Id">Details</a> |
+                    <a class="interaction-buttons" asp-action="Delete" asp-route-id="@item.Label.Id">Delete</a>
             </td>
         </tr>
 }

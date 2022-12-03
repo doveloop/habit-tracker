@@ -33,6 +33,29 @@ namespace Habit_Tracker___Doveloop.Controllers
             return viewModels;
         }
 
+        private void CreateLabelViewModel(List<HabitLabel> allLabels)
+        {
+            List<AppliedData> labelViewModel = new List<AppliedData>();
+            allLabels.ForEach(label =>
+                labelViewModel.Add(
+                    new AppliedData
+                    {
+                        Id = label.Id,
+                        Name = label.Name
+                    }
+                )
+            );
+
+            ViewBag.LabelViewModel = labelViewModel;
+        }
+
+        private HabitViewModel PopulateAppliedLabelData(HabitLabel habit, List<HabitLabel> allLabels)
+        {
+            HabitViewModel habitViewModel = CreateHabitViewModel(habit, allLabels);
+            CreateLabelViewModel(allLabels);
+            return habitViewModel;
+        }
+
         public async Task<IActionResult> AddHabitEntry(string id, float units)
         {
             await _cosmosDbService.AddHabitEntryAsync(id, DateTime.UtcNow, units);
@@ -45,12 +68,13 @@ namespace Habit_Tracker___Doveloop.Controllers
             return View(CreateHabitViewModels(await _cosmosDbService.GetHabitsLabelsAsync()));
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             HabitLabel habit = new HabitLabel();
             habit.User = HttpContext.User.Identity.Name;
             habit.Type = "habit";
             //habit.Units = "";;//could make a default unit
+            CreateLabelViewModel((await _cosmosDbService.GetLabelsAsync()).ToList());
             return View(habit);
         }
 
@@ -84,24 +108,6 @@ namespace Habit_Tracker___Doveloop.Controllers
             }
             
             return View(PopulateAppliedLabelData(habit, habitsLabels.Where(l => l.Type == "label").ToList()));
-        }
-
-        private HabitViewModel PopulateAppliedLabelData(HabitLabel habit, List<HabitLabel> allLabels)
-        {
-            HabitViewModel habitViewModel = CreateHabitViewModel(habit, allLabels);
-            List<AppliedData> labelViewModel = new List<AppliedData>();
-            allLabels.ForEach(label =>
-                labelViewModel.Add(
-                    new AppliedData
-                    {
-                        Id = label.Id,
-                        Name = label.Name
-                    }
-                )
-            );
-            
-            ViewBag.LabelViewModel = labelViewModel;
-            return habitViewModel;
         }
 
         [HttpPost]

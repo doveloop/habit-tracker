@@ -3,13 +3,17 @@
 @{
     ViewData["Title"] = "Index";
 }
-<head>
-    <link rel="stylesheet" type="text/css" href="/css/labelsandhabitspage.css"/>
+    <head>
+    <link rel="stylesheet" type="text/css" href="/css/habits.css" />
+        
 </head>
 <h1>Habits List</h1>
+
+
 <p class ="addbutton">
     <a  asp-action="Create"  >+</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
@@ -24,25 +28,33 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
-            <td>
+        <tr class="card">
+            <td class="name">
                 @Html.DisplayFor(modelItem => item.Habit.Name)
             </td>
-            <td> 
-                @{
-                    string labelNames = "";
-                    foreach (var label in item.Labels)
-                        labelNames += label.Name + ", ";
-                    if (labelNames.Length == 0) labelNames = "No labels";
-                    else labelNames = labelNames.Remove(labelNames.Length - 2, 2);
-                    @labelNames;
-                }
-            </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a> 
-                <a asp-action="Details" asp-route-id="@item.Habit.Id">Details</a> 
-                <a asp-action="Delete" asp-route-id="@item.Habit.Id">Delete</a>
-                <a asp-action="AddHabitEntry" asp-route-id="@item.Habit.Id" asp-route-units="1" >Add Entry</a>
+                   
+                      
+                        @foreach (var label in item.Labels){
+                            
+                            <div class="label">
+                                @label.Name
+                            </div>
+                            }
+                        @if(item.Labels.Count==0){
+                            <div class="nolabels">No Labels</div>
+                        }
+                        
+                            
+                    
+
+            </td>
+            
+            <td>
+                    <a class="interaction-buttons" asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a>
+                    <a class="interaction-buttons" asp-action="Details" asp-route-id="@item.Habit.Id">Details</a>
+                    <a class="interaction-buttons" asp-action="Delete" asp-route-id="@item.Habit.Id">Delete</a>
+                    <a class="interaction-buttons" asp-action="AddHabitEntry" asp-route-id="@item.Habit.Id" asp-route-units="1">Add Entry</a>
             </td>
         </tr>
 }
