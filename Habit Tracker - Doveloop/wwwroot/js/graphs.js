@@ -647,6 +647,7 @@ if(getAllHabits)
         nextItem.id = toCamelCase(labels[i])
         nextItem.name = toCamelCase(labels[i])
         nextItem.type = "checkbox"
+        nextItem.checked = previousProfile.graphData.filteredLabels.includes(labels[i])
         nextItem.value = labels[i]
 
         let nextLabel = document.createElement("label")
