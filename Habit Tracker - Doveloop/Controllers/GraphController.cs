@@ -29,8 +29,15 @@ namespace Habit_Tracker___Doveloop.Controllers
             List<HabitViewModel> viewModels = new List<HabitViewModel>();
             IEnumerable<HabitLabel> habitsLabels = await _cosmosDbService.GetHabitsLabelsAsync();
             habitsLabels.Where(h => h.Type == "habit").ToList().ForEach(h => viewModels.Add(CreateHabitViewModel(h, habitsLabels)));
-            ViewBag.PreviousGraph = (await _cosmosDbService.GetProfileAsync()).GraphData.Output();
+            ViewBag.UserProfile = (await _cosmosDbService.GetProfileAsync());
             return View(viewModels);
+        }
+
+        [HttpPost]
+        public void UpdateProfile(UserProfile userProfile)
+        {
+            _cosmosDbService.UpdateProfileAsync(userProfile);
+            ViewBag.UserProfile = userProfile;
         }
     }
 }

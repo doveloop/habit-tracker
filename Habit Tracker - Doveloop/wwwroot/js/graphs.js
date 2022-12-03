@@ -556,6 +556,8 @@ let saveGraph = function (link)
 }
 
 let CreateDates = function (startDate, endDate) {
+    previousProfile.graphData.startDate = startDate;
+    previousProfile.graphData.endDate = endDate;
     let dates = []
     if (startDate != "") {
         let utcDate = startDate.split('-')
@@ -662,6 +664,7 @@ if(getAllHabits)
 
     let dateStartFilterForm = document.getElementById("label_date_start")
     let dateEndFilterForm = document.getElementById("label_date_end")
+
     if (filters.dateFrom != null) dateStartFilterForm.value = filters.dateFrom.toISOString().split('T')[0]
     if (filters.dateTo != null) dateEndFilterForm.value = filters.dateTo.toISOString().split('T')[0]
 
@@ -678,6 +681,7 @@ if(getAllHabits)
         }
 
         filters.labels = newLabelFilters
+        previousProfile.graphData.filteredLabels = newLabelFilters;
 
         let dates = CreateDates(dateStartFilterForm.value, dateEndFilterForm.value)
         filters.dateFrom = dates[0];

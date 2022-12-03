@@ -18,9 +18,9 @@
     <input id="label_date_end" type="date"/>
     <label for="label_date_end">...To</label>
 
-    <input type="button" id="generate_graph_bar_week" value="Weekly Chart"/>
-    <input type="button" id="generate_graph_bar" value="Bar Chart"/>
-    <input type="button" id="generate_graph_pie" value="Pie Chart"/>
+    <input type="button" id="generate_graph_bar_week" value="Weekly Chart" onclick="Button('week')"/>
+    <input type="button" id="generate_graph_bar" value="Bar Chart" onclick="Button('bar')"/>
+    <input type="button" id="generate_graph_pie" value="Pie Chart" onclick="Button('pie')"/>
     <!--input type="button" id="generate_graph_line" value="Line Chart"/-->
 </form>
 
@@ -35,7 +35,17 @@
 </div>
 
 <script>
-    let previousFilter = @Html.Raw(Json.Serialize(ViewBag.PreviousGraph));
+    let previousProfile = @Json.Serialize(ViewBag.UserProfile);
+    function Button(type) {
+        previousProfile.graphData.graphType = type;
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("UpdateProfile", "Graph")",
+            data: { userProfile: previousProfile }
+        });
+    }
+    
+    let previousFilter = @Html.Raw(Json.Serialize(ViewBag.UserProfile.GraphData));
     let getAllHabits = function() 
     {
         let output = new Array()
