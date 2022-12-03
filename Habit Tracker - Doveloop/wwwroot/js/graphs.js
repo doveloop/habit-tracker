@@ -495,16 +495,10 @@ let serveGraph = function (data, filters, graphType)
                 let startDate = filters.dateFrom
                 let endDate = filters.dateTo
 
-                //console.log("startDate: " + startDate.toUTCString())
-                //console.log("endDate: " + endDate.toUTCString())
-
                 //Check if any entries are on or after dateFrom and on or before dateTo
                 let entryCount = 0;
                 for (let j = 0; j < habitData[i].entries.length; j++) {
-                    let utcDate = habitData[i].entries[j].dateTime.substr(0, 10)
-                    utcDate = utcDate.split('-')
-                    utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
-                    let date = new Date(Date.UTC(...utcDate))
+                    let date = new Date(habitData[i].entries[j].dateTime)
                     if (startDate <= date && date <= endDate) entryCount++;
                 }
                 if (entryCount != 0) {
@@ -558,19 +552,22 @@ let saveGraph = function (link)
 let CreateDates = function (startDate, endDate) {
     previousProfile.graphData.startDate = startDate;
     previousProfile.graphData.endDate = endDate;
+    
     let dates = []
     if (startDate != "") {
-        let utcDate = startDate.split('-')
-        utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
-        dates[0] = new Date(Date.UTC(...utcDate))
+        let utcDate = new Date(startDate)
+        dates[0] = new Date(String(utcDate.getUTCMonth() + 1).padStart(2, '0') + "-" + String(utcDate.getUTCDate()).padStart(2, '0') + "-" + utcDate.getUTCFullYear())
     } else {
         dates[0] = new Date(-8640000000000000)//gives min date
     }
 
     if (endDate != "") {
-        let utcDate = endDate.split('-')
-        utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
-        dates[1] = new Date(Date.UTC(...utcDate))
+        let utcDate = new Date(endDate)
+        dates[1] = new Date(String(utcDate.getUTCMonth() + 1).padStart(2, '0') + "-" + String(utcDate.getUTCDate()).padStart(2, '0') + "-" + utcDate.getUTCFullYear())
+        //set endDate to end of day
+        dates[1].setHours(dates[1].getHours() + 23)
+        dates[1].setMinutes(dates[1].getMinutes() + 59)
+        dates[1].setSeconds(dates[1].getSeconds() + 59)
     } else {
         dates[1] = new Date(8640000000000000)//gives max date
     }
@@ -603,7 +600,7 @@ if(getAllHabits)
     for (let i = 0; i < previousFilter.filteredLabels.length; i++) {
         filters.labels.push(previousFilter.filteredLabels[i]);
     }
-    ///TODO: construct date objects here
+    
     let dates = CreateDates(previousFilter.startDate ?? "", previousFilter.endDate ?? "")
     filters.dateFrom = dates[0]
     filters.dateTo = dates[1]
@@ -666,8 +663,8 @@ if(getAllHabits)
     let dateStartFilterForm = document.getElementById("label_date_start")
     let dateEndFilterForm = document.getElementById("label_date_end")
 
-    if (filters.dateFrom != null) dateStartFilterForm.value = filters.dateFrom.toISOString().split('T')[0]
-    if (filters.dateTo != null) dateEndFilterForm.value = filters.dateTo.toISOString().split('T')[0]
+    if (previousFilter.startDate != null) dateStartFilterForm.value = filters.dateFrom.toISOString().split('T')[0]
+    if (previousFilter.endDate != null) dateEndFilterForm.value = filters.dateTo.toISOString().split('T')[0]
 
     let chartUpdateFilterForm = document.getElementById("chart_filter")
     chartUpdateFilterForm.addEventListener("change", function (event)
@@ -690,8 +687,13 @@ if(getAllHabits)
 
         //make sure end date isnt before start date
         if (dates[1] < dates[0]) {
-            filters.dateTo = dates[0];
-            dateEndFilterForm.value = dateStartFilterForm.value;
+            //set to end of same day
+            filters.dateTo.setDate(dates[0].getDate())
+            filters.dateTo.setHours(dates[0].getHours() + 23)
+            filters.dateTo.setMinutes(dates[0].getMinutes() + 59)
+            filters.dateTo.setSeconds(dates[0].getSeconds() + 59)
+            let testString = filters.dateTo.getFullYear() + "-" + String(filters.dateTo.getMonth() + 1).padStart(2, '0') + "-" + String(filters.dateTo.getDate()).padStart(2, '0')
+            dateEndFilterForm.value = testString
         }
     })
 }

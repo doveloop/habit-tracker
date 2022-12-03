@@ -9,8 +9,6 @@
         public string User { get; set; }
         [JsonProperty(PropertyName = "graphData")]
         public GraphData GraphData { get; set; }
-
-
         public UserProfile() {}
         public UserProfile(string _user)
         {
