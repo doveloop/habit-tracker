@@ -471,8 +471,6 @@ let serveGraph = function (data, filters, graphType)
 
             let strokeColor = getTextColorFromBackground(fillColor)
 
-            let newPoint = new DataPoint((Math.random() * 10) + 1 /*TODO GET ACTUAL ENTRIES*/, habitData[i].name, fillColor, strokeColor)
-
             //Using inclusive filter
             let includeInFilter = false
             let filtersSet = false
@@ -493,7 +491,26 @@ let serveGraph = function (data, filters, graphType)
 
             if(includeInFilter || (!includeInFilter && !filtersSet))
             {
-                habitDataPoints.push(newPoint)
+                //convert dates to utc
+                let startDate = filters.dateFrom
+                let endDate = filters.dateTo
+
+                //console.log("startDate: " + startDate.toUTCString())
+                //console.log("endDate: " + endDate.toUTCString())
+
+                //Check if any entries are on or after dateFrom and on or before dateTo
+                let entryCount = 0;
+                for (let j = 0; j < habitData[i].entries.length; j++) {
+                    let utcDate = habitData[i].entries[j].dateTime.substr(0, 10)
+                    utcDate = utcDate.split('-')
+                    utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
+                    let date = new Date(Date.UTC(...utcDate))
+                    if (startDate <= date && date <= endDate) entryCount++;
+                }
+                if (entryCount != 0) {
+                    let newPoint = new DataPoint(entryCount, habitData[i].name, fillColor, strokeColor)
+                    habitDataPoints.push(newPoint)
+                }
             }
         }
     }
@@ -538,6 +555,26 @@ let saveGraph = function (link)
     link.setAttribute('href', graph_target.toDataURL("image/png").replace("image/png", "image/octet-stream"));
 }
 
+let CreateDates = function (startDate, endDate) {
+    let dates = []
+    if (startDate != "") {
+        let utcDate = startDate.split('-')
+        utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
+        dates[0] = new Date(Date.UTC(...utcDate))
+    } else {
+        dates[0] = new Date(-8640000000000000)//gives min date
+    }
+
+    if (endDate != "") {
+        let utcDate = endDate.split('-')
+        utcDate[1] = utcDate[1] - 1//utc needs month from 0-11
+        dates[1] = new Date(Date.UTC(...utcDate))
+    } else {
+        dates[1] = new Date(8640000000000000)//gives max date
+    }
+    return dates
+}
+
 //Only executes on the Graphs page
 if(getAllHabits)
 {
@@ -564,11 +601,11 @@ if(getAllHabits)
     for (let i = 0; i < previousFilter.filteredLabels.length; i++) {
         filters.labels.push(previousFilter.filteredLabels[i]);
     }
-    filters.dateFrom = previousFilter.startDate ?? -1;
-    filters.dateTo = previousFilter.endDate ?? -1;
+    ///TODO: construct date objects here
+    let dates = CreateDates(previousFilter.startDate ?? "", previousFilter.endDate ?? "")
+    filters.dateFrom = dates[0]
+    filters.dateTo = dates[1]
 
-    console.log(filters);
-    console.log(previousFilter);
     serveGraph(habitData, filters, previousFilter.graphType ?? "pie") //TODO this is where the "last viewed" will go
 
     let graphButtons = document.querySelectorAll("#chart_filter>input[type=button]")
@@ -625,6 +662,8 @@ if(getAllHabits)
 
     let dateStartFilterForm = document.getElementById("label_date_start")
     let dateEndFilterForm = document.getElementById("label_date_end")
+    if (filters.dateFrom != null) dateStartFilterForm.value = filters.dateFrom.toISOString().split('T')[0]
+    if (filters.dateTo != null) dateEndFilterForm.value = filters.dateTo.toISOString().split('T')[0]
 
     let chartUpdateFilterForm = document.getElementById("chart_filter")
     chartUpdateFilterForm.addEventListener("change", function (event)
@@ -640,8 +679,14 @@ if(getAllHabits)
 
         filters.labels = newLabelFilters
 
-        filters.dateFrom = dateStartFilterForm.value === "" ? -1 : dateStartFilterForm.value
-        filters.dateTo = dateEndFilterForm.value === "" ? -1 : dateEndFilterForm.value
-        console.log(filters.dateFrom);
+        let dates = CreateDates(dateStartFilterForm.value, dateEndFilterForm.value)
+        filters.dateFrom = dates[0];
+        filters.dateTo = dates[1];
+
+        //make sure end date isnt before start date
+        if (dates[1] < dates[0]) {
+            filters.dateTo = dates[0];
+            dateEndFilterForm.value = dateStartFilterForm.value;
+        }
     })
 }

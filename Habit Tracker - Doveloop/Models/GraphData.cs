@@ -26,6 +26,8 @@
         public GraphData()
         {
             FilteredLabels = new List<string>();
+            //StartDate = DateTime.Today;
+            //EndDate = DateTime.Today;//.AddDays(1);
         }
     }
 }
