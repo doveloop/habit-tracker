@@ -178,12 +178,13 @@ let drawLine = function (context, x1, y1, x2, y2, stroke, start_cap, end_cap) {
     }
 }
 
-function DataPoint(value, label, fill_color, stroke_color) {
+function DataPoint(value, date, label, fill_color, stroke_color) {
     if (!value || !label) {
         throw "Datapoint needs a value and a label"
     }
 
     this.value = parseInt(value)
+    this.date = date
     this.label = label
     this.fillColor = fill_color
     this.strokeColor = stroke_color
@@ -444,6 +445,127 @@ let drawLineChartFromDP = function (canvas, data_points, caps) {
     drawLineChart(canvas, undefined, data, labels, fill, stroke, caps)
 }
 
+let drawWeekChartFromDP = function (canvas, data_points)
+{
+    const context = canvas.getContext("2d")
+
+    const margin = 10
+    const bar_padding = 5
+
+    const width = canvas.getBoundingClientRect().width
+    const height = canvas.getBoundingClientRect().height
+    const display_width = (width - (2 * margin))
+    const display_height = (height - (2 * margin))
+
+    let bars = 7
+
+    const font_size = (display_width / bars) * 0.13
+
+    context.font = font_size + "px Arial"
+    context.textAlign = "center";
+
+    let week = []
+
+    for (let day = -6; day < 1; day++)
+    {
+        //Get the data for this day of the last week
+        let currentDay = new Date()
+        currentDay.setDate(currentDay.getDate() + day)
+        currentDay.setHours(0)
+        currentDay.setMinutes(0)
+        currentDay.setSeconds(0)
+
+        let nextDay = new Date(currentDay)
+        nextDay.setDate(currentDay.getDate() + 1)
+
+        week[day + 6] = {}
+        for (let i = 0; i < data_points.length; i++)
+        {
+            if(data_points[i].date < nextDay && data_points[i].date >= currentDay)
+            {
+                let currentDatapoint = data_points[i]
+
+                try
+                {
+                    week[day + 6][currentDatapoint.label]["value"] += currentDatapoint.value
+                    week[day + 6][currentDatapoint.label]["label"] = currentDatapoint.label
+                    week[day + 6][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
+                    week[day + 6][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
+                }
+                catch (err)
+                {
+                    week[day + 6][currentDatapoint.label] = {
+                        "value" : 0,
+                        "label" : "",
+                        "fillColor" : "",
+                        "strokeColor" : ""
+                    }
+                    week[day + 6][currentDatapoint.label]["value"] += currentDatapoint.value
+                    week[day + 6][currentDatapoint.label]["label"] = currentDatapoint.label
+                    week[day + 6][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
+                    week[day + 6][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
+                }
+
+            }
+        }
+    }
+
+    let max = 0
+    for (let day = 0; day < 7; day++)
+    {
+        let sumDay = 0
+        for (const i in week[day])
+        {
+            sumDay += week[day][i].value
+        }
+
+        max = Math.max(max, sumDay)
+    }
+
+    let height_factor = display_height / max
+
+    let bar_width = (display_width - ((bars - 1) * bar_padding)) / bars
+
+    let bottom_left = height - margin
+
+    //For each day in the last week...
+    for (let day = 0; day < 7; day++)
+    {
+        let curr_x = margin + (day * (bar_width + bar_padding))
+
+        let curr_y = 0
+        //...for each datapoint in this day...
+        for (const i in week[day])
+        {
+            let currentDatapoint = week[day][i]
+
+            //If colors are defined in a list, use the list
+            let fillColor = currentDatapoint.fillColor
+            let strokeColor = currentDatapoint.strokeColor
+
+            drawRect(canvas.getContext("2d"), curr_x, bottom_left - curr_y, bar_width, -currentDatapoint.value * height_factor, fillColor, strokeColor)
+            console.log("The datapoint's value is:", currentDatapoint.value)
+
+            console.log("Drawing a rectangle:",
+                curr_x,
+                bottom_left - curr_y,
+                bar_width,
+                -currentDatapoint.value * height_factor,
+                fillColor,
+                strokeColor)
+
+            //Do labels
+            context.fillStyle = strokeColor
+            context.fillText(currentDatapoint.label, curr_x + (bar_width / 2), display_height - curr_y)
+
+            curr_y += currentDatapoint.value * height_factor
+        }
+    }
+
+    console.log(week)
+
+}
+
 let graph_title = document.getElementById("graph_title")
 let graph_target = document.getElementById("graph_canvas")
 
@@ -453,7 +575,9 @@ let serveGraph = function (data, filters, graphType)
     let title = "Context"
 
     let habitData = data
+    let allHabitDataPoints = []
     let habitDataPoints = []
+    let habitDataPointsByHabit = []
 
     for(let i = 0; i < habitData.length; i++)
     {
@@ -497,13 +621,24 @@ let serveGraph = function (data, filters, graphType)
 
                 //Check if any entries are on or after dateFrom and on or before dateTo
                 let entryCount = 0;
-                for (let j = 0; j < habitData[i].entries.length; j++) {
+
+                for (let j = 0; j < habitData[i].entries.length; j++)
+                {
                     let date = new Date(habitData[i].entries[j].dateTime)
-                    if (startDate <= date && date <= endDate) entryCount++;
+
+                    let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
+                    allHabitDataPoints.push(newPoint)
+
+                    if (startDate <= date && date <= endDate)
+                    {
+                        entryCount++
+                        let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
+                        habitDataPoints.push(newPoint)
+                    }
                 }
                 if (entryCount != 0) {
-                    let newPoint = new DataPoint(entryCount, habitData[i].name, fillColor, strokeColor)
-                    habitDataPoints.push(newPoint)
+                    let newPoint = new DataPoint(entryCount, undefined, habitData[i].name, fillColor, strokeColor)
+                    habitDataPointsByHabit.push(newPoint)
                 }
             }
         }
@@ -515,17 +650,22 @@ let serveGraph = function (data, filters, graphType)
     {
         case "bar":
             graph_title.innerText = `Bar Chart - ${title}`
-            drawBarChartFromDP(graph_target, habitDataPoints)
+            drawBarChartFromDP(graph_target, habitDataPointsByHabit)
 
             break;
         case "pie":
             graph_title.innerText = `Pie Chart - ${title}`
-            drawPieChartFromDP(graph_target, habitDataPoints)
+            drawPieChartFromDP(graph_target, habitDataPointsByHabit)
 
             break;
-        case "line":
+        case "week":
+            graph_title.innerText = `Weekly Bar Chart - ${title} (Last 7 days)`
+            drawWeekChartFromDP(graph_target, allHabitDataPoints)
+
+            break;
+        case "line": //DEPRECIATED
             graph_title.innerText = `Line Chart - ${title}`
-            drawLineChartFromDP(graph_target, habitDataPoints, "x")
+            drawLineChartFromDP(graph_target, habitDataPointsByHabit, "x")
 
             break;
         default:
