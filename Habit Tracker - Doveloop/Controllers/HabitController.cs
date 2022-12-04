@@ -56,9 +56,10 @@ namespace Habit_Tracker___Doveloop.Controllers
             return habitViewModel;
         }
 
-        public async Task<IActionResult> AddHabitEntry(string id, float units)
+        public async Task<IActionResult> AddHabitEntry(string id, string entryDate, int entryUnits)
         {
-            await _cosmosDbService.AddHabitEntryAsync(id, DateTime.UtcNow, units);
+            DateTime date = DateTime.Parse(entryDate);
+            await _cosmosDbService.AddHabitEntryAsync(id, date.ToUniversalTime(), entryUnits);
             return RedirectToAction("Index");
         }
 
