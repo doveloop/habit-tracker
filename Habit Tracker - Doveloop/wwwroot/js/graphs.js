@@ -544,15 +544,6 @@ let drawWeekChartFromDP = function (canvas, data_points)
             let strokeColor = currentDatapoint.strokeColor
 
             drawRect(canvas.getContext("2d"), curr_x, bottom_left - curr_y, bar_width, -currentDatapoint.value * height_factor, fillColor, strokeColor)
-            console.log("The datapoint's value is:", currentDatapoint.value)
-
-            console.log("Drawing a rectangle:",
-                curr_x,
-                bottom_left - curr_y,
-                bar_width,
-                -currentDatapoint.value * height_factor,
-                fillColor,
-                strokeColor)
 
             //Do labels
             context.fillStyle = strokeColor
@@ -561,9 +552,6 @@ let drawWeekChartFromDP = function (canvas, data_points)
             curr_y += currentDatapoint.value * height_factor
         }
     }
-
-    console.log(week)
-
 }
 
 let graph_title = document.getElementById("graph_title")
