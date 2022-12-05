@@ -178,7 +178,7 @@ let drawLine = function (context, x1, y1, x2, y2, stroke, start_cap, end_cap) {
     }
 }
 
-function DataPoint(value, date, label, fill_color, stroke_color) {
+function DataPoint(value, date, label, labelWithCategories, fill_color, stroke_color) {
     if (!value || !label) {
         throw "Datapoint needs a value and a label"
     }
@@ -186,6 +186,7 @@ function DataPoint(value, date, label, fill_color, stroke_color) {
     this.value = parseInt(value)
     this.date = date
     this.label = label
+    this.labelWithCategories = labelWithCategories
     this.fillColor = fill_color
     this.strokeColor = stroke_color
 }
@@ -316,7 +317,7 @@ let drawPieChartFromDP = function (canvas, data_points, alt_sum, scale = 1.0) {
         data.push(data_points[i].value)
         fill.push(data_points[i].fillColor)
         stroke.push(data_points[i].strokeColor)
-        labels.push(data_points[i].label)
+        labels.push(data_points[i].labelWithCategories)
     }
 
     drawPieChart(canvas, scale, data, labels, fill, stroke, alt_sum)
@@ -466,8 +467,9 @@ let drawWeekChartFromDP = function (canvas, data_points)
 
     let week = []
     let weekLabels = []
+    let offset = 7
 
-    for (let day = -6; day < 1; day++)
+    for (let day = -offset; day < 0; day++)
     {
         //Get the data for this day of the last week
         let currentDay = new Date()
@@ -481,7 +483,7 @@ let drawWeekChartFromDP = function (canvas, data_points)
         let nextDay = new Date(currentDay)
         nextDay.setDate(currentDay.getDate() + 1)
 
-        week[day + 6] = {}
+        week[day + offset] = {}
         for (let i = 0; i < data_points.length; i++)
         {
             if(data_points[i].date < nextDay && data_points[i].date >= currentDay)
@@ -490,23 +492,23 @@ let drawWeekChartFromDP = function (canvas, data_points)
 
                 try
                 {
-                    week[day + 6][currentDatapoint.label]["value"] += currentDatapoint.value
-                    week[day + 6][currentDatapoint.label]["label"] = currentDatapoint.label
-                    week[day + 6][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
-                    week[day + 6][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
+                    week[day + offset][currentDatapoint.label]["value"] += currentDatapoint.value
+                    week[day + offset][currentDatapoint.label]["label"] = currentDatapoint.label
+                    week[day + offset][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
+                    week[day + offset][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
                 }
                 catch (err)
                 {
-                    week[day + 6][currentDatapoint.label] = {
+                    week[day + offset][currentDatapoint.label] = {
                         "value" : 0,
                         "label" : "",
                         "fillColor" : "",
                         "strokeColor" : ""
                     }
-                    week[day + 6][currentDatapoint.label]["value"] += currentDatapoint.value
-                    week[day + 6][currentDatapoint.label]["label"] = currentDatapoint.label
-                    week[day + 6][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
-                    week[day + 6][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
+                    week[day + offset][currentDatapoint.label]["value"] += currentDatapoint.value
+                    week[day + offset][currentDatapoint.label]["label"] = currentDatapoint.label
+                    week[day + offset][currentDatapoint.label]["fillColor"] = currentDatapoint.fillColor
+                    week[day + offset][currentDatapoint.label]["strokeColor"] = currentDatapoint.strokeColor
                 }
 
             }
@@ -622,19 +624,47 @@ let serveGraph = function (data, filters, graphType)
                 for (let j = 0; j < habitData[i].entries.length; j++)
                 {
                     let date = new Date(habitData[i].entries[j].dateTime)
+                    let labels = ""
 
-                    let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
+                    if(habitData[i].labels.length > 0)
+                    {
+                        labels = "("
+
+                        for (let k = 0; k < habitData[i].labels.length; k++) {
+                            labels = labels + (k > 0 ? ", " : "") + habitData[i].labels[k].name
+                        }
+
+                        labels = labels + ") "
+                    }
+
+                    let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, `${labels}${habitData[i].name}`, fillColor, strokeColor)
+                    // let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
                     allHabitDataPoints.push(newPoint)
 
                     if (startDate <= date && date <= endDate)
                     {
                         entryCount++
-                        let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
+                        let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, `${labels}${habitData[i].name}`, fillColor, strokeColor)
+                        // let newPoint = new DataPoint(habitData[i].entries[j]["Units"], date, habitData[i].name, fillColor, strokeColor)
                         habitDataPoints.push(newPoint)
                     }
                 }
-                if (entryCount != 0) {
-                    let newPoint = new DataPoint(entryCount, undefined, habitData[i].name, fillColor, strokeColor)
+                if (entryCount !== 0) {
+                    let labels = ""
+
+                    if(habitData[i].labels.length > 0)
+                    {
+                        labels = "("
+
+                        for (let k = 0; k < habitData[i].labels.length; k++) {
+                            labels = labels + (k > 0 ? ", " : "") + habitData[i].labels[k].name
+                        }
+
+                        labels = labels + ") "
+                    }
+
+                    let newPoint = new DataPoint(entryCount, undefined, habitData[i].name, `${labels}${habitData[i].name}`, fillColor, strokeColor)
+                    // let newPoint = new DataPoint(entryCount, undefined, habitData[i].name, fillColor, strokeColor)
                     habitDataPointsByHabit.push(newPoint)
                 }
             }
