@@ -199,15 +199,16 @@ function DataPoint(value, date, label, labelWithCategories, fill_color, stroke_c
  *  fill a single color string for the fill of each bar OR a list corresponding to each data point
  *  stroke a single color string for the line stroke about the bars and the labels
  */
-let drawBarChart = function (canvas, data, labels, fill, stroke) {
+let drawBarChart = function (canvas, data, labels, fill, stroke, doWithKey = false) {
     const context = canvas.getContext("2d")
 
     const margin = 10
+    const left_margin = doWithKey ? 60 : margin
     const bar_padding = 5
 
     const width = canvas.getBoundingClientRect().width
     const height = canvas.getBoundingClientRect().height
-    const display_width = (width - (2 * margin))
+    const display_width = (width - (margin + left_margin))
     const display_height = (height - (2 * margin))
 
     let bars = data.length
@@ -229,7 +230,7 @@ let drawBarChart = function (canvas, data, labels, fill, stroke) {
     let bottom_left = height - margin
 
     for (let i = 0; i < data.length; i++) {
-        let curr_x = margin + (i * (bar_width + bar_padding))
+        let curr_x = left_margin + (i * (bar_width + bar_padding))
 
         //If colors are defined in a list, use the list
         let fillColor = typeof fill === "string" ? fill : fill[i]
@@ -239,8 +240,21 @@ let drawBarChart = function (canvas, data, labels, fill, stroke) {
 
         //Do labels
         context.fillStyle = strokeColor
-        // context.fillStyle = fillColor
-        context.fillText(labels[i], curr_x + (bar_width / 2), display_height);
+        context.textAlign = "center"
+        context.fillText(labels[i], curr_x + (bar_width / 2), display_height)
+
+        if(doWithKey)
+        {
+            const keySize = margin
+            drawRect(canvas.getContext("2d"), margin, 10+((margin + bar_padding) * i) + (keySize / 4), keySize - 2, keySize - 2, fillColor, "black")
+
+            context.strokeStyle = "black"
+            context.fillStyle = "black"
+            context.textAlign = "left"
+            context.fillText(doWithKey[i],
+                margin + keySize,
+                10+((margin + bar_padding) * i) + keySize)
+        }
     }
 }
 
@@ -249,15 +263,17 @@ let drawBarChartFromDP = function (canvas, data_points) {
     let fill = []
     let stroke = []
     let labels = []
+    let withKey = []
 
     for (let i = 0; i < data_points.length; i++) {
         data.push(data_points[i].value)
         fill.push(data_points[i].fillColor)
         stroke.push(data_points[i].strokeColor)
         labels.push(data_points[i].label)
+        withKey.push(data_points[i].labelWithCategories)
     }
 
-    drawBarChart(canvas, data, labels, fill, stroke)
+    drawBarChart(canvas, data, labels, fill, stroke, withKey)
 }
 
 let drawPieChart = function (canvas, scale, data, labels, fill, stroke, alt_sum) {
@@ -270,6 +286,11 @@ let drawPieChart = function (canvas, scale, data, labels, fill, stroke, alt_sum)
     const display_width = (width - (2 * margin))
     const display_height = (height - (2 * margin))
     const outer_radius = Math.min(display_width / 2, display_height / 2) * scale
+
+    const center = {
+        x: (display_width / 2) + ((display_width / 2) - outer_radius),
+        y: display_height / 2
+    }
 
     let data_sum = 0
     for (let i = 0; i < data.length; i++) {
@@ -293,7 +314,7 @@ let drawPieChart = function (canvas, scale, data, labels, fill, stroke, alt_sum)
 
         next_end += last_end === "north" ? 0 : last_end //Adjust the next end by the last end
 
-        last_end = drawSubCircle(context, display_width / 2, display_height / 2, outer_radius, last_end, next_end, fillColor, strokeColor)
+        last_end = drawSubCircle(context, center.x, center.y, outer_radius, last_end, next_end, fillColor, strokeColor)
 
         const keySize = 20
         drawRect(canvas.getContext("2d"), margin, (margin * i) + (keySize / 4), keySize - 2, keySize - 2, fillColor, "black")
