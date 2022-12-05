@@ -449,7 +449,7 @@ let drawWeekChartFromDP = function (canvas, data_points)
 {
     const context = canvas.getContext("2d")
 
-    const margin = 10
+    const margin = 14
     const bar_padding = 5
 
     const width = canvas.getBoundingClientRect().width
@@ -465,6 +465,7 @@ let drawWeekChartFromDP = function (canvas, data_points)
     context.textAlign = "center";
 
     let week = []
+    let weekLabels = []
 
     for (let day = -6; day < 1; day++)
     {
@@ -474,6 +475,8 @@ let drawWeekChartFromDP = function (canvas, data_points)
         currentDay.setHours(0)
         currentDay.setMinutes(0)
         currentDay.setSeconds(0)
+
+        weekLabels.push(`${currentDay.getMonth() + 1}/${currentDay.getDate() + 1}`)
 
         let nextDay = new Date(currentDay)
         nextDay.setDate(currentDay.getDate() + 1)
@@ -534,9 +537,15 @@ let drawWeekChartFromDP = function (canvas, data_points)
         let curr_x = margin + (day * (bar_width + bar_padding))
 
         let curr_y = 0
+
+        //Do day label
+        context.fillStyle = "black"
+        context.font = (font_size + 2) + "px Arial"
+        context.fillText(weekLabels[day], curr_x + (bar_width / 2), (2 * margin) + display_height - curr_y)
+        context.font = font_size + "px Arial"
+
         //...for each datapoint in this day...
-        for (const i in week[day])
-        {
+        for (const i in week[day]) {
             let currentDatapoint = week[day][i]
 
             //If colors are defined in a list, use the list
