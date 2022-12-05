@@ -33,28 +33,27 @@
                 @Html.DisplayFor(modelItem => item.Habit.Name)
             </td>
             <td>
-                   
-                      
-                        @foreach (var label in item.Labels){
+                @foreach (var label in item.Labels){
                             
-                            <div class="label">
-                                @label.Name
-                            </div>
-                            }
-                        @if(item.Labels.Count==0){
-                            <div class="nolabels">No Labels</div>
-                        }
-                        
-                            
-                    
-
+                    <div class="label">
+                        @label.Name
+                    </div>
+                    }
+                @if(item.Labels.Count==0){
+                    <div class="nolabels">No Labels</div>
+                }
             </td>
             
             <td>
                     <a class="interaction-buttons" asp-action="Edit" asp-route-id="@item.Habit.Id">Edit</a>
                     <a class="interaction-buttons" asp-action="Details" asp-route-id="@item.Habit.Id">Details</a>
                     <a class="interaction-buttons" asp-action="Delete" asp-route-id="@item.Habit.Id">Delete</a>
-                    <a class="interaction-buttons" asp-action="AddHabitEntry" asp-route-id="@item.Habit.Id" asp-route-units="1">Add Entry</a>
+                    <form asp-controller="Habit" asp-action="AddHabitEntry">
+                        <input type="hidden" name="id" value="@item.Habit.Id"/>
+                        <input type="submit" class="interaction-buttons" value="Add Entry">
+                        <input type="date" name="entryDate" />
+                        <input type="number" name="entryUnits" min="1" />
+                    </form>
             </td>
         </tr>
 }
