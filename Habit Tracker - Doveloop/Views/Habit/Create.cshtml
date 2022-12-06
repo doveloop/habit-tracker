@@ -1,15 +1,18 @@
 ﻿@model Habit_Tracker___Doveloop.Models.HabitLabel
 
+
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Create</h1>
+<head>
+    <link rel="stylesheet" type="text/css" href="/css/habits.css" />
+</head>
+<h1 style="color:black;">Create</h1>
 
 <h4>Habit</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4  card">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -19,8 +22,38 @@
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Units" class="control-label"></label>
+                <input asp-for="Units" class="form-control" />
+                <span asp-validation-for="Units" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <table>
+                        <tr>
+                            @{
+                                int count = 0;
+                                int tableCols = 3;
+                                List<Habit_Tracker___Doveloop.Models.ViewModels.AppliedData> labels = ViewBag.LabelViewModel;
+
+                                foreach (var Label in labels)
+                                {
+                                    if(count++ % tableCols == 0) {
+                                        @:</tr><tr>
+                                    }
+                                    @:<td class="label">
+                                        <input type="checkbox" class="checkbox"
+                                            name="selectedLabels"
+                                            value="@Label.Id"
+                                        />
+                                            @Label.Name
+                                    @:</td>
+                                }
+                                @:</tr>
+                            }
+                    </table>
+                </div>
+            </div>
+            <div class="form-group create-button">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
@@ -34,3 +67,7 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+<style>
+    h1{ color: blue}
+
+</style>

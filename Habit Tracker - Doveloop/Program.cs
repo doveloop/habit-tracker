@@ -9,13 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 try
 {
-    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString"]), configuration["DBName"], configuration["HabitLabelContainer"]));
+    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString"]), configuration["DBName"], configuration["HabitLabelContainer"], configuration["ProfileContainer"]));
 }
 catch (Exception e)
 {
     try
     {
-        builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString2"]), configuration["DBName"], configuration["HabitLabelContainer"]));
+        builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(configuration["DbConnectionString2"]), configuration["DBName"], configuration["HabitLabelContainer"], configuration["ProfileContainer"]));
     }
     catch (Exception ex)
     {

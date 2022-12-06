@@ -7,13 +7,15 @@
     {
         private CosmosClient _client;
         private Container _habitLabelContainer;
+        private Container _profileContainer;
         private string _user;
         private PartitionKey _partitionKey;
 
-        public CosmosDbService(CosmosClient dbClient, string habitLabelDbName, string containerName)
+        public CosmosDbService(CosmosClient dbClient, string DbName, string habitLabelContainerName, string profileContainerName)
         {
             _client = dbClient;
-            _habitLabelContainer = _client.GetContainer(habitLabelDbName, containerName);
+            _habitLabelContainer = _client.GetContainer(DbName, habitLabelContainerName);
+            _profileContainer = _client.GetContainer(DbName, profileContainerName);
         }
 
         public void SetUser(string user)
@@ -22,7 +24,30 @@
             _partitionKey = new PartitionKey(user);
         }
 
+        public async Task<UserProfile> GetProfileAsync()
+        {
+            var query = _profileContainer.GetItemQueryIterator<UserProfile>(new QueryDefinition("SELECT TOP 1 * FROM c WHERE c.user = \"" + _user + "\""));
+            var response = await query.ReadNextAsync();
+            return response.FirstOrDefault() ?? new UserProfile(_user);
+        }
+
+        public async Task UpdateProfileAsync(UserProfile profile)
+        {
+            await _profileContainer.UpsertItemAsync(profile, _partitionKey);
+        }
+
         #region HabitsLabels
+
+        public async Task AddHabitEntryAsync(string id, DateTime time, float units)
+        {
+            HabitLabel habit = await GetHabitLabelAsync(id);
+            habit.Entries.Insert(0, new HabitEntry
+            {
+                dateTime = time,
+                Units = units
+            });
+            await UpdateHabitLabelAsync(habit);
+        }
         public async Task AddHabitLabelAsync(HabitLabel habitLabel)
         {
             await _habitLabelContainer.CreateItemAsync<HabitLabel>(habitLabel, _partitionKey);
@@ -31,7 +56,7 @@
         public async Task DeleteHabitLabelAsync(HabitLabel habitLabel)
         {
             //Remove relations
-            foreach (Guid relationId in habitLabel.RelationIds)
+            foreach (Guid relationId in habitLabel.RelationIds ?? Array.Empty<Guid>().ToList())
             {
                 HabitLabel relation = await GetHabitLabelAsync(relationId.ToString());
                 relation.RelationIds.Remove(habitLabel.Id);
@@ -43,12 +68,12 @@
 
         public async Task<IEnumerable<HabitLabel>> GetHabitsAsync()
         {
-            return await GetHabitsLabelsAsync("Select * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"habit\"");
+            return await GetHabitsLabelsAsync("SELECT * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"habit\"");
         }
 
         public async Task<IEnumerable<HabitLabel>> GetLabelsAsync()
         {
-            return await GetHabitsLabelsAsync("Select * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"label\"");
+            return await GetHabitsLabelsAsync("SELECT * FROM c WHERE c.user = \"" + _user + "\" AND c.type = \"label\"");
         }
 
         public async Task<HabitLabel> GetHabitLabelAsync(string id)
