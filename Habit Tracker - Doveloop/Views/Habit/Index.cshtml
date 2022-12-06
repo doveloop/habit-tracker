@@ -51,8 +51,8 @@
                     <form asp-controller="Habit" asp-action="AddHabitEntry">
                         <input type="hidden" name="id" value="@item.Habit.Id"/>
                         <input type="submit" class="interaction-buttons" value="Add Entry">
-                        <input type="date" name="entryDate" />
-                        <input type="number" name="entryUnits" min="1" />
+                        <input class="interaction-buttons" type="date" name="entryDate" />
+                        <input class="interaction-buttons" type="number" name="entryUnits" min="1" />
                     </form>
             </td>
         </tr>
